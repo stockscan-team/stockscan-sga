@@ -1,7 +1,0 @@
-com.stockscan
-com.stockscan.controller
-com.stockscan.model
-com.stockscan.model.dao
-com.stockscan.view.components
-com.stockscan.view.events
-com.stockscan.view.pages

@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html","k":"18"},{"l":"com.stockscan"},{"l":"com.stockscan.controller"},{"l":"com.stockscan.model"},{"l":"com.stockscan.model.dao"},{"l":"com.stockscan.view.components"},{"l":"com.stockscan.view.events"},{"l":"com.stockscan.view.pages"}];updateSearchResults();
