@@ -1,1 +1,10 @@
 
+
+# Archivos generados por NetBeans
+/StockScanE/build/
+/StockScanE/dist/
+/StockScanE/nbproject/private/
+
+# Archivos de macOS
+.DS_Store
+._*
