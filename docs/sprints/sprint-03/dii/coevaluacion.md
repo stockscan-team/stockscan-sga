@@ -7,19 +7,19 @@
 
 > *Criterios evaluados: Cumplimiento de tareas, calidad del código/documentación, comunicación en Daily y apoyo al equipo.*
 
-| Miembro evaluado | Evalúa: [Compañero 1] | Evalúa: [Compañero 2] | Evalúa: [Compañero 3] | Evalúa: [Compañero 4] | Media Final |
+| Miembro evaluado | Evalúa: Carmen Monge | Evalúa: Álvaro López | Evalúa: Elena Saez | Evalúa: Angel Luis | Media Final |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Carmen Monge** | — | 9.5 | 9.5 | 10 | **9.7** |
 | **Álvaro López** | 9.5 | — | 9.0 | 9.5 | **9.3** |
-| **Eleena Saez** | 10 | 9.5 | — | 9.5 | **9.7** |
+| **Elena Saez** | 10 | 9.5 | — | 9.5 | **9.7** |
 | **Angel Luis** | 9.5 | 9.5 | 9.5 | — | **9.5** |
 
 ##  Valoración individual y aportaciones clave
 
-* **[Compañero 1]:** [Resumen de tareas realizadas y puntos fuertes]
-* **[Compañero 2]:** [Resumen de tareas realizadas y puntos fuertes]
-* **[Compañero 3]:** [Resumen de tareas realizadas y puntos fuertes]
-* **[Compañero 4]:** [Resumen de tareas realizadas y puntos fuertes]
+* **Carmen Monge:** [Resumen de tareas realizadas y puntos fuertes]
+* **Álvaro López:** [Resumen de tareas realizadas y puntos fuertes]
+* **Elena Saez:** [Resumen de tareas realizadas y puntos fuertes]
+* **Angel Luis:** [Resumen de tareas realizadas y puntos fuertes]
 
 ##  Retrospectiva
 * **Qué funcionó bien:** [...]
