@@ -1,7 +1,7 @@
 # Coevaluación · Sprint 03 — DII
 
 * **Fecha de cierre:** DD/MM/2026
-* **Scrum Master del ciclo:** [Nombre del compañero]
+* **Scrum Master del ciclo:** Carmen Monge
 
 ##  Matriz de evaluación del equipo (1 a 10)
 
@@ -9,10 +9,10 @@
 
 | Miembro evaluado | Evalúa: [Compañero 1] | Evalúa: [Compañero 2] | Evalúa: [Compañero 3] | Evalúa: [Compañero 4] | Media Final |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **[Compañero 1]** | — | 9.5 | 9.5 | 10 | **9.7** |
-| **[Compañero 2]** | 9.5 | — | 9.0 | 9.5 | **9.3** |
-| **[Compañero 3]** | 10 | 9.5 | — | 9.5 | **9.7** |
-| **[Compañero 4]** | 9.5 | 9.5 | 9.5 | — | **9.5** |
+| **Carmen Monge** | — | 9.5 | 9.5 | 10 | **9.7** |
+| **Álvaro López** | 9.5 | — | 9.0 | 9.5 | **9.3** |
+| **Eleena Saez** | 10 | 9.5 | — | 9.5 | **9.7** |
+| **Angel Luis** | 9.5 | 9.5 | 9.5 | — | **9.5** |
 
 ##  Valoración individual y aportaciones clave
 
