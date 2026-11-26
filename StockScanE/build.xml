@@ -101,6 +101,12 @@
                     </resourcecount>
                 </condition>
                 <javac debug="@{debug}" deprecation="${javac.deprecation}" destdir="@{destdir}" encoding="${source.encoding}" excludes="@{excludes}" fork="${javac.fork}" includeantruntime="false" includes="@{includes}" release="${javac.release}" sourcepath="@{sourcepath}" srcdir="@{srcdir}" tempdir="${java.io.tmpdir}">
+                    <!-- La aplicación consume estas clases desde el JAR. Sus fuentes
+                         siguen disponibles para jar-componente y javadoc. -->
+                    <exclude name="com/stockscan/view/components/BasePanel.java"/>
+                    <exclude name="com/stockscan/view/components/ComponenteStockScan.java"/>
+                    <exclude name="com/stockscan/view/events/StockScanEvent.java"/>
+                    <exclude name="com/stockscan/view/events/StockScanListener.java"/>
                     <src>
                         <dirset dir="@{gensrcdir}" erroronmissingdir="false">
                             <include name="*"/>
