@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 public abstract class BasePanel extends JPanel {
 
     @Serial
+    /** Identificador de versión para la serialización del panel. */
     private static final long serialVersionUID = 1L;
 
     /**

@@ -14,6 +14,16 @@ import javax.swing.SwingUtilities;
  */
 public class PruebaFeedbackIntegrado {
 
+    /** Crea una instancia de la clase de pruebas de activación. */
+    public PruebaFeedbackIntegrado() {
+    }
+
+    /**
+     * Muestra la comprobación superada o interrumpe la prueba si falla.
+     * @param condicion resultado esperado de la comprobación
+     * @param descripcion comportamiento que se está verificando
+     * @throws AssertionError si la condición es falsa
+     */
     private static void comprobar(boolean condicion, String descripcion) {
         if (!condicion) {
             throw new AssertionError(descripcion);

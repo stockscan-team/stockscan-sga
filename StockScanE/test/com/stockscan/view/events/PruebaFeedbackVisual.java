@@ -10,23 +10,35 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 /**
+ * Permite probar con el ratón y el teclado el aspecto del botón y observar sus notificaciones.
  *
  *  @author Álvaro López De San Román
 */
 
 public class PruebaFeedbackVisual implements StockScanListener {
 
+    /** Prepara el contador y la etiqueta que mostrará los eventos en la ventana. */
+    public PruebaFeedbackVisual() {
+    }
+
+    /** Etiqueta que muestra el contador y los datos de la última activación. */
     private final JLabel resultado =
             new JLabel("Notificaciones recibidas: 0");
 
+    /** Número de eventos recibidos desde que se creó la prueba. */
     private int notificaciones = 0;
 
+    /**
+     * Programa la apertura de la ventana en el hilo de eventos de Swing.
+     * @param args argumentos de ejecución (se ignoran)
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             new PruebaFeedbackVisual().mostrarVentana();
         });
     }
 
+    /** Abre la ventana con el botón de prueba, la casilla para habilitarlo y el resultado. */
     private void mostrarVentana() {
         JFrame ventana = new JFrame("StockScan - Prueba de feedback visual");
         ventana.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -59,6 +71,7 @@ public class PruebaFeedbackVisual implements StockScanListener {
     }
 
     /**
+     * Actualiza la etiqueta con el contador, el código y el mensaje del evento recibido.
      *
      * @param evento información enviada por el componente
      */

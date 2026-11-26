@@ -11,6 +11,16 @@ import javax.swing.SwingUtilities;
  */
 public class PruebaBasePanel {
 
+    /** Crea una instancia de la clase de pruebas dimensionales. */
+    public PruebaBasePanel() {
+    }
+
+    /**
+     * Muestra la comprobación superada o interrumpe la prueba si falla.
+     * @param condicion resultado esperado de la comprobación
+     * @param descripcion comportamiento que se está verificando
+     * @throws AssertionError si la condición es falsa
+     */
     private static void comprobar(boolean condicion, String descripcion) {
         if (!condicion) {
             throw new AssertionError(descripcion);
@@ -20,7 +30,10 @@ public class PruebaBasePanel {
     }
 
     /**
-     * Comprueba una propiedad dimensional.
+     * Verifica que la propiedad copia las dimensiones y conserva su valor si se rechaza un tamaño negativo.
+     * @param nombre nombre de la propiedad que aparece en el resultado
+     * @param establecer operación que asigna el tamaño
+     * @param obtener operación que lee el tamaño actual
      */
     private static void probarDimension(
             String nombre,

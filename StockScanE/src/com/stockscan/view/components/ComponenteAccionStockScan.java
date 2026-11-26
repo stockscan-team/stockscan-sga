@@ -24,7 +24,14 @@ public class ComponenteAccionStockScan extends ComponenteStockScan {
      * Estados visuales del botón.
      */
     private enum EstadoVisual {
-        REPOSO, HOVER, PULSADO, DESHABILITADO
+        /** El botón está disponible y en reposo. */
+        REPOSO,
+        /** El puntero se encuentra sobre el botón. */
+        HOVER,
+        /** El botón está presionado y armado para ejecutar su acción. */
+        PULSADO,
+        /** El botón tiene desactivada la interacción. */
+        DESHABILITADO
     }
 
     /** Botón interno del componente. */

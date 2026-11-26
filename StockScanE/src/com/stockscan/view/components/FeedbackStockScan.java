@@ -10,19 +10,32 @@ import javax.swing.JButton;
 import javax.swing.border.Border;
 
 /**
+ * Adapta botones Swing existentes para mostrar su estado y emitir eventos de activación.
  * 
  * @author Álvaro López De San Román
 */
 public class FeedbackStockScan extends ComponenteStockScan {
 
+    /** Crea el componente desde el que se instalará el comportamiento de los botones. */
+    public FeedbackStockScan() {
+    }
+
     /**
      * Estados de interacción independientes del filtro seleccionado.
      */
     public enum Estado {
-        REPOSO, HOVER, PULSADO, DESHABILITADO
+        /** El botón está disponible y en reposo. */
+        REPOSO,
+        /** El puntero se encuentra sobre el botón. */
+        HOVER,
+        /** El botón está presionado y armado para ejecutar su acción. */
+        PULSADO,
+        /** El botón tiene desactivada la interacción. */
+        DESHABILITADO
     }
 
     /**
+     * Consulta el modelo del botón. Un botón deshabilitado tiene prioridad sobre la pulsación y el paso del puntero.
      *
      * @param boton botón que se consulta
      * @return estado visual actual
@@ -45,6 +58,7 @@ public class FeedbackStockScan extends ComponenteStockScan {
     }
 
     /**
+     * Instala los colores de interacción y el indicador de foco. Cada activación del botón emite un evento con el código indicado y el texto visible.
      *
      * @param boton botón existente de la pantalla
      * @param codigo identificador que se enviará en el evento
@@ -166,6 +180,7 @@ public class FeedbackStockScan extends ComponenteStockScan {
     }
 
     /**
+     * Recalcula el aspecto de los botones configurados, por ejemplo tras cambiar el filtro seleccionado.
      *
      * @param botones botones del grupo que se debe actualizar
      */
