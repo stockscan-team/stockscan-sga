@@ -9,18 +9,18 @@
 
 | Miembro evaluado | Evalúa: Carmen Monge | Evalúa: Álvaro López | Evalúa: Elena Saez | Evalúa: Angel Luis | Media Final |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Carmen Monge** | — | 9.5 | 9.5 | 10 | **9.7** |
-| **Álvaro López** | 9.5 | — | 9.0 | 9.5 | **9.3** |
-| **Elena Saez** | 10 | 9.5 | — | 9.5 | **9.7** |
-| **Angel Luis** | 9.5 | 9.5 | 9.5 | — | **9.5** |
+| **Carmen Monge** | — | 9.5 | - | - | **9.7** |
+| **Álvaro López** | - | 9 | - | - | **9.3** |
+| **Elena Saez** | - | 9.5 | — | - | **9.7** |
+| **Angel Luis** | - | 9.5 | - | — | **9.5** |
 
 ##  Valoración individual y aportaciones clave
 
 * **Carmen Monge:** [Resumen de tareas realizadas y puntos fuertes]
-* **Álvaro López:** [Resumen de tareas realizadas y puntos fuertes]
+* **Álvaro López:** He trabajado en los estados de feedback visual, el indicador de foco y la conexión de las acciones con las notificaciones del componente. También he preparado su incorporación visual en `StockPanel`, documentación con fuentes oficiales y evidencias en GIF. He apoyado la documentación de constructores y accesores. Mis puntos fuertes han sido el cuidado de la interfaz, el interés por aprender y la preparación del trabajo para facilitar su revisión. La integración de la tarea #75 compila correctamente y queda pendiente de verificación visual y funcional.
 * **Elena Saez:** [Resumen de tareas realizadas y puntos fuertes]
 * **Angel Luis:** [Resumen de tareas realizadas y puntos fuertes]
 
 ##  Retrospectiva
-* **Qué funcionó bien:** [...]
-* **Qué mejoraremos en el próximo Sprint:** [...]
+* **Qué funcionó bien:** Compartir el trabajo y las dudas ha facilitado la integración de los componentes. También ha sido útil repartir la implementación y la revisión, documentar los cambios y preparar evidencias para explicar lo realizado.
+* **Qué mejoraremos en el próximo Sprint:** Por mi parte @romansscriptt, quiero pedir disculpas por no haber estado al 100 % durante una parte del Sprint. Poco a poco he ido retomando el ritmo y me comprometo a mantener una participación más constante, comunicar antes las dificultades y dejar más tiempo para las pruebas. Este proyecto me está gustando mucho y creo que podemos conseguir grandes objetivos juntos. He recuperado la motivación y quiero demostrarlo con constancia y trabajo: vuelvo con más fuerza y con ganas de seguir aportando.
