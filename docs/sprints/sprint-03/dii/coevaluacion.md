@@ -1,6 +1,6 @@
 # Coevaluación · Sprint 03 — DII
 
-* **Fecha de cierre:** DD/MM/2026
+* **Fecha de cierre:** 27/11/2026
 * **Scrum Master del ciclo:** Carmen Monge
 
 ##  Matriz de evaluación del equipo (1 a 10)
