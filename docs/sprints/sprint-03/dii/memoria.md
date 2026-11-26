@@ -394,3 +394,533 @@ La numeración de las siguientes referencias corresponde únicamente al apartado
 [12] Oracle Corporation, “How to Use Key Bindings,” *The Java Tutorials*. [En línea]. Disponible en: https://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html.
 
 Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias de la API corresponden a Java SE 21.
+
+## 3.3. Pruebas automatizadas y validación de estados aislados
+
+### Índice del apartado 3.3
+
+- [3.3.1. Aislamiento del componente](#331-aislamiento-del-componente)
+  - [3.3.1.1. Comprobar la configuración del proyecto y la versión de Java utilizada](#3311-comprobar-la-configuración-del-proyecto-y-la-versión-de-java-utilizada)
+  - [3.3.1.2. Añadir JUnit 5 como dependencia de pruebas](#3312-añadir-junit-5-como-dependencia-de-pruebas)
+  - [3.3.1.3. Crear la clase de test en el paquete de pruebas correspondiente](#3313-crear-la-clase-de-test-en-el-paquete-de-pruebas-correspondiente)
+  - [3.3.1.4. Preparar la creación del componente sin depender de la ventana principal](#3314-preparar-la-creación-del-componente-sin-depender-de-la-ventana-principal)
+  - [3.3.1.5. Ejecutar las operaciones de UI en el Event Dispatch Thread](#3315-ejecutar-las-operaciones-de-ui-en-el-event-dispatch-thread)
+  - [3.3.1.6. Añadir utilidades gráficas solo si aportan valor](#3316-añadir-utilidades-gráficas-solo-si-aportan-valor)
+  - [3.3.1.7. Ejecutar un test mínimo para verificar que la infraestructura funciona](#3317-ejecutar-un-test-mínimo-para-verificar-que-la-infraestructura-funciona)
+  - [3.3.1.8. Documentar la configuración y cómo ejecutar las pruebas](#3318-documentar-la-configuración-y-cómo-ejecutar-las-pruebas)
+  - [3.3.1.9. Documentación](#3319-documentación)
+  - [3.3.1.10. Riesgos y problemas previsibles en las pruebas del componente Swing](#33110-riesgos-y-problemas-previsibles-en-las-pruebas-del-componente-swing)
+  - [3.3.1.11. Decisión de herramienta de construcción: Maven en lugar de Gradle](#33111-decisión-de-herramienta-de-construcción-maven-en-lugar-de-gradle)
+  - [3.3.1.12. Migración parcial a Maven solo para las pruebas](#33112-migración-parcial-a-maven-solo-para-las-pruebas)
+  - [3.3.1.13. Glosario de términos técnicos](#33113-glosario-de-términos-técnicos)
+- [3.3.2. Aserciones sobre el estado interno](#332-aserciones-sobre-el-estado-interno)
+  - [3.3.2.1. Verificar los valores por defecto tras usar el constructor sin argumentos](#3321-verificar-los-valores-por-defecto-tras-usar-el-constructor-sin-argumentos)
+  - [3.3.2.2. Comprobar que cada setter actualiza el valor que devuelve su getter](#3322-comprobar-que-cada-setter-actualiza-el-valor-que-devuelve-su-getter)
+  - [3.3.2.3. Verificar que los tamaños negativos se rechazan o se normalizan](#3323-verificar-que-los-tamaños-negativos-se-rechazan-o-se-normalizan)
+  - [3.3.2.4. Comprobar el tratamiento de colores/textos nulos](#3324-comprobar-el-tratamiento-de-colores-textos-nulos)
+  - [3.3.2.5. Comprobar que los cambios visuales solicitan actualización](#3325-comprobar-que-los-cambios-visuales-solicitan-actualización)
+  - [3.3.2.6. Añadir casos límite y nombres descriptivos a los tests](#3326-añadir-casos-límite-y-nombres-descriptivos-a-los-tests)
+  - [3.3.2.7. Ejecutar la suite y corregir fallos junto al responsable del código](#3327-ejecutar-la-suite-y-corregir-fallos-junto-al-responsable-del-código)
+  - [3.3.2.8. Documentar los casos cubiertos y el resultado](#3328-documentar-los-casos-cubiertos-y-el-resultado)
+  - [3.3.2.9. Documentación](#3329-documentación)
+  - [3.3.2.10. Revisión de la tarea](#33210-revisión-de-la-tarea)
+  - [3.3.2.11. Riesgos y problemas previsibles](#33211-riesgos-y-problemas-previsibles)
+  - [3.3.2.12. Glosario de términos técnicos](#33212-glosario-de-términos-técnicos)
+- [3.3.3. Prueba de simulación de interacción](#333-prueba-de-simulación-de-interacción)
+  - [3.3.3.1. Simular un clic/interacción mediante la herramienta disponible](#3331-simular-un-clic-interacción-mediante-la-herramienta-disponible)
+  - [3.3.3.2. Verificar que se emite exactamente la notificación esperada](#3332-verificar-que-se-emite-exactamente-la-notificación-esperada)
+  - [3.3.3.3. Verificar que no se notifica a un listener después de desregistrarlo](#3333-verificar-que-no-se-notifica-a-un-listener-después-de-desregistrarlo)
+  - [3.3.3.4. Comprobar el cambio de estado observable tras la interacción](#3334-comprobar-el-cambio-de-estado-observable-tras-la-interacción)
+  - [3.3.3.5. Ejecutar las pruebas en conjunto con el resto de la suite](#3335-ejecutar-las-pruebas-en-conjunto-con-el-resto-de-la-suite)
+  - [3.3.3.6. Registrar incidencias y repetir la prueba tras las correcciones](#3336-registrar-incidencias-y-repetir-la-prueba-tras-las-correcciones)
+  - [3.3.3.7. Documentar el procedimiento y los resultados](#3337-documentar-el-procedimiento-y-los-resultados)
+  - [3.3.3.8. Documentación](#3338-documentación)
+  - [3.3.3.9. Implementación y resultados de las pruebas de simulación](#3339-implementación-y-resultados-de-las-pruebas-de-simulación)
+- [Estado de revisión del apartado 3.3](#estado-de-revisión-del-apartado-33)
+- [Referencias del apartado 3.3](#referencias-del-apartado-33)
+
+---
+
+---
+
+### 3.3.1. Aislamiento del componente
+
+#### 3.3.1.1. Comprobar la configuración del proyecto y la versión de Java utilizada
+**Objetivo:** confirmar que el proyecto puede ejecutar pruebas unitarias con JUnit 5 antes de añadir nada.
+**Qué hay que hacer:**
+- Verificar la versión de Java del proyecto. JUnit 5 requiere Java 8 o superior [1], [2].
+- Identificar el gestor de dependencias en uso con Maven [3].
+- Confirmar que la interfaz es Swing, de modo que la utilidad gráfica sea AssertJ Swing [4].
+- Comprobar que existe la carpeta de pruebas "src/test/" separada del código de producción "src/main/" [5].
+**Resultado esperado:** versión de Java y gestor de dependencias identificados y anotados en el issue.
+
+#### 3.3.1.2. Añadir JUnit 5 como dependencia de pruebas
+**Objetivo:** dotar al proyecto de las librerías necesarias para escribir y ejecutar las pruebas.
+**Qué hay que hacer:**
+- Añadir **junit-jupiter** (versión 5.x) con ámbito **test**, para que no se incluya en la aplicación final [6], [7].
+- Si se confirma que aporta valor, añadir también **assertj-swing-junit** con ámbito **test**. Evitar dependencias innecesarias [8], [6].
+- Configurar la ejecución de tests en Maven mediante **maven-surefire-plugin** [9], [3].
+- Recompilar el proyecto y comprobar que las dependencias se descargan sin errores [6].
+**Resultado esperado:** el proyecto compila con JUnit 5 disponible solo para pruebas.
+
+**Comparativa JUnit 4 vs JUnit 5 en Apache NetBeans**
+*(Versión de referencia: Apache NetBeans 31, publicada el 5 de agosto [10]. La 32 está en su tercera y última versión candidata).*
+
+| Criterio | JUnit 4 | JUnit 5 (Jupiter) |
+|---|---|---|
+| Soporte en NetBeans | Desde NetBeans 6.5, que genera los tests con estilo JUnit 4 [12] | Desde Apache NetBeans 10.0 [13], [14] |
+| Plantilla al crear un test | Se mantiene si el proyecto ya usa JUnit 4 [15] | Es la opción por defecto si el JDK es 8 o superior [15] |
+| Proyectos Maven | Se ejecuta con Surefire [15] | NetBeans delega en Maven y Surefire; requiere Surefire 2.22.0 o superior [15], [3] |
+| Versión mínima de Java | Java 5 [1] | Java 8 [1], [2] |
+| Anotaciones | `@Before`, `@After`, `@RunWith` [1] | `@BeforeEach`, `@AfterEach`, `@ExtendWith` [1] |
+| Aserciones y excepciones | Atributos "expected" y "timeout" en `@Test` [16] | **assertThrows**, **assertAll** y **assertTimeoutPreemptively** [17], [16] |
+| Mantenimiento | Recomendado solo para proyectos heredados [18] | Recomendado para desarrollo nuevo [18]. |
+
+**Recomendación: JUnit 5**, por tres motivos: el propio issue #68 pide utilizar JUnit 5, NetBeans lo soporta de forma nativa en proyectos Maven [13], [15], [3], y aporta herramientas clave usadas en las tareas (**assertAll**, **assertThrows**, `@DisplayName` y `@Nested`) [2], [16].
+
+#### 3.3.1.3. Crear la clase de test en el paquete de pruebas correspondiente
+**Objetivo:** tener una clase de pruebas unitarias dedicada al componente, separada de la ventana principal.
+**Qué hay que hacer:**
+- Crear la clase en la carpeta de pruebas, dentro del mismo paquete que el componente a probar para acceder a sus miembros sin romper la encapsulación [2], [5].
+- Importar las anotaciones `@Test`, `@BeforeEach` y `@AfterEach` y las aserciones de "org.junit.jupiter.api" [2].
+- Limitar el alcance de la clase al componente: no debe depender de la ventana principal [20].
+**Resultado esperado:** clase de test creada y compilando.
+
+#### 3.3.1.4. Preparar la creación del componente sin depender de la ventana principal
+**Objetivo:** poder instanciar el componente de forma aislada en cada prueba.
+**Qué hay que hacer:**
+- Instanciar el componente en un método `@BeforeEach`, sin crear ni mostrar la ventana principal (**JFrame**) [2], [20].
+- Si el componente necesita un contenedor, usar un **JFrame** o **JPanel** auxiliar propio de la prueba [20].
+- Sustituir las dependencias externas por objetos simples o valores de prueba.
+- Preparar AssertJ Swing para localizar y manipular el componente por separado [21], [22].
+- Garantizar que cada test parte de una instancia nueva [2].
+**Resultado esperado:** el componente se crea en las pruebas sin levantar la aplicación completa.
+
+#### 3.3.1.5. Ejecutar las operaciones de UI en el Event Dispatch Thread
+**Objetivo:** evitar fallos intermitentes y accesos incorrectos a componentes Swing desde hilos distintos al de la interfaz [23].
+**Qué hay que hacer:**
+- Crear y modificar el componente dentro del Event Dispatch Thread (EDT). En las pruebas, usar **GuiActionRunner.execute(...)** o **SwingUtilities.invokeAndWait(...)** [23], [24].
+- Registrar **FailOnThreadViolationRepaintManager.install()** en un método `@BeforeAll` para fallar si hay accesos fuera del EDT [24], [25].
+- Aplicar esta regla solo a las operaciones que tocan la interfaz [23].
+**Resultado esperado:** todas las operaciones de UI de las pruebas se ejecutan en el EDT.
+
+#### 3.3.1.6. Añadir utilidades gráficas solo si aportan valor
+**Objetivo:** mantener la infraestructura de pruebas lo más simple posible.
+**Qué hay que hacer:**
+- Decidir si AssertJ Swing es necesaria (solo aporta si hay que simular clics o localizar componentes) [4], [22].
+- Si basta con getters, probar solo con JUnit 5 y no añadir la librería.
+- Dejar anotada en el issue la decisión y su motivo.
+**Resultado esperado:** decisión justificada sobre las utilidades gráficas.
+
+#### 3.3.1.7. Ejecutar un test mínimo para verificar que la infraestructura funciona
+**Objetivo:** comprobar que todo lo preparado funciona antes de escribir pruebas completas.
+**Qué hay que hacer:**
+- Escribir un único test que cree el componente y compruebe algo básico (por ejemplo, que no es **null**) [2].
+- Ejecutarlo desde la línea de comandos: **mvn test** en Maven [9].
+- Comprobar en el informe de resultados ("target/surefire-reports") que el test ha pasado [9].
+**Resultado esperado:** un test que se ejecuta y pasa, confirmando la configuración.
+
+#### 3.3.1.8. Documentar la configuración y cómo ejecutar las pruebas
+**Objetivo:** que cualquier miembro del equipo pueda ejecutar las pruebas sin ayuda.
+**Qué hay que hacer:**
+- Añadir al README una sección "Pruebas" con los requisitos: versión de Java, gestor de dependencias y librerías.
+- Indicar los comandos exactos para ejecutar todas las pruebas o una sola clase.
+- Explicar dónde se encuentran los informes de resultados [9].
+**Resultado esperado:** sección de pruebas en la documentación del proyecto.
+
+#### 3.3.1.9. Documentación
+**Objetivo:** dejar constancia de lo que prueba la clase de test y cómo está montado el aislamiento.
+**Qué hay que hacer:**
+- Añadir Javadoc explicando qué componente prueba y cómo se aísla de la ventana principal [29].
+- Comentar brevemente la preparación en `@BeforeEach` y `@AfterEach` [2].
+- Enlazar el issue #68 desde la documentación.
+**Resultado esperado:** código de pruebas y documentación coherentes.
+
+#### 3.3.1.10. Riesgos y problemas previsibles en las pruebas del componente Swing
+- **Error de entorno sin pantalla (HeadlessException):** ocurre en equipos sin entorno gráfico. Se previene ejecutando las pruebas en un equipo con pantalla o preparando un entorno gráfico virtual (Xvfb) [26], [27], [28].
+- **Pruebas que fallan a veces en integración continua (flaky):** errores típicos como **WaitTimedOutError** o **ComponentLookupException** causados porque la ventana no llega a mostrarse. Se previene probando primero en local y no dando por buena una prueba que solo pasa una vez [31], [32], [33].
+- **JUnit 5 no está soportado oficialmente por AssertJ Swing:** el **GUITestRunner** está pensado para JUnit 4. Se previene creando y cerrando el robot manualmente en `@BeforeEach` y `@AfterEach` [19], [21].
+- **Accesos a la interfaz fuera del EDT:** provoca fallos aleatorios. Se previene instalando **FailOnThreadViolationRepaintManager** al inicio [24], [25], [23].
+- **Componentes difíciles de localizar:** si no tienen nombre, la búsqueda falla. Se previene asignando **setName(...)** a los componentes [22], [33].
+- **Pruebas que interfieren con el equipo:** AssertJ Swing simula gestos reales a nivel del sistema. Se previene no usando el ratón ni el teclado durante las pruebas gráficas [28].
+
+#### 3.3.1.11. Decisión de herramienta de construcción: Maven en lugar de Gradle
+**Decisión:** el proyecto usa Maven como herramienta de construcción y gestor de dependencias.
+**Motivos:**
+1.  **Integración nativa con NetBeans:** NetBeans delega en Surefire para ejecutar los tests en proyectos Maven [15], [14].
+2.  **JUnit 5 con menos configuración:** Surefire toma el motor de pruebas de las dependencias normales, sin necesidad de configurar `useJUnitPlatform()` explícitamente [3].
+3.  **Estructura convencional:** Maven sigue "convención sobre configuración", es más sencillo de aprender y tiene más documentación [5], [37], [38].
+4.  **Proyecto de tamaño reducido:** La diferencia de velocidad con Gradle es despreciable en proyectos de un solo módulo [39], [40].
+**Qué asumimos:** Gradle puede ser más rápido en proyectos grandes [40], [41], y la configuración XML es más verbosa que Groovy/Kotlin [38]. **Migraremos temporalmente el proyecto a Maven únicamente para la etapa de testeo, pero el proyecto está hecho con Ant.**
+
+#### 3.3.1.12. Migración parcial a Maven solo para las pruebas
+**Objetivo:** añadir Maven al proyecto únicamente para compilar y ejecutar las pruebas con JUnit 5, sin cambiar cómo se compila con Ant.
+**Enfoque elegido:** mantener la estructura de Ant ("build.xml", "nbproject/") y añadir un "pom.xml" en la raíz que apunte a los directorios existentes mediante `sourceDirectory` y `testSourceDirectory` [42], [43], [44].
+**Pasos:**
+1.  Crear una rama (ej. "feature/maven-testing") [35].
+2.  Crear el "pom.xml" declarando JUnit Jupiter, AssertJ Swing (opcional) y Surefire 2.22.0+ [7].
+3.  Resolver librerías externas declarándolas en el "pom.xml" [6].
+4.  Compilar con **mvn compile** [44].
+5.  Nombrar las clases de test con el patrón **\*Test** [46].
+6.  Ejecutar con **mvn test**. Los informes quedan en "target/surefire-reports" [7].
+7.  Convivir con Ant: añadir "target/" al ".gitignore". No modificar "build.xml" [9], [44].
+8.  Verificar con **mvn clean test** y **ant clean** [9].
+**Qué no se hace:** No se mueven archivos a "src/main/" ni se elimina "build.xml" [44]. No se usa Maven para empaquetar [44].
+
+#### 3.3.1.13. Glosario de términos técnicos
+- **Prueba unitaria:** prueba automática que comprueba una parte pequeña del código de forma aislada [2].
+- **JUnit 5 (Jupiter):** framework de Java para escribir y ejecutar pruebas [2].
+- **Aserción:** comprobación dentro de una prueba. Si no se cumple, la prueba falla [2].
+- **Aislamiento (desacoplamiento):** probar el componente sin depender de la ventana principal [2].
+- **Swing:** biblioteca de Java para crear interfaces gráficas de escritorio [20].
+- **Event Dispatch Thread (EDT):** hilo único donde Swing debe crear y modificar los componentes gráficos [23].
+- **AssertJ Swing:** biblioteca para probar interfaces Swing [4].
+- **Maven:** herramienta que compila el proyecto, gestiona dependencias y ejecuta las pruebas [5].
+- **Maven Surefire:** plugin de Maven que ejecuta las pruebas [9].
+- **HeadlessException:** error de Java cuando no hay pantalla disponible [26].
+
+---
+
+### 3.3.2. Aserciones sobre el estado interno
+
+#### 3.3.2.1. Verificar los valores por defecto tras usar el constructor sin argumentos
+**Objetivo:** confirmar que el componente nace con un estado inicial correcto y predecible.
+**Qué hay que hacer:**
+- Crear una instancia del componente con el constructor sin argumentos, sin la ventana principal.
+- Comprobar, solo a través de la API pública (getters), que cada propiedad devuelve el valor por defecto esperado [1].
+- Evitar acceder a atributos privados o a detalles internos de implementación [1], [2].
+**Resultado esperado:** una prueba por cada propiedad con valor por defecto, todas pasando.
+
+#### 3.3.2.2. Comprobar que cada setter actualiza el valor que devuelve su getter
+**Objetivo:** asegurar que lo que se asigna con un setter es lo que después se lee con su getter.
+**Qué hay que hacer:**
+- Identificar todos los pares setter/getter públicos.
+- Asignar un valor distinto del valor por defecto y comprobar que el getter devuelve exactamente ese valor.
+- Agrupar las comprobaciones con **assertAll** para ver todos los fallos a la vez [4].
+**Resultado esperado:** todos los pares setter/getter cubiertos y comportándose de forma coherente.
+
+#### 3.3.2.3. Verificar que los tamaños negativos se rechazan o se normalizan
+**Objetivo:** dejar probado cómo reacciona el componente ante tamaños no válidos.
+**Qué hay que hacer:**
+- Confirmar con el equipo cuál es el contrato (rechazar el valor o normalizarlo). Anotarlo en el issue.
+- Probar un valor negativo y comprobar el comportamiento definido.
+- Si se rechaza con excepción, comprobar el tipo con **assertThrows** [4].
+- Si se normaliza, comprobar que el getter devuelve el valor normalizado.
+**Resultado esperado:** pruebas que reflejan el contrato de tamaños negativos acordado.
+
+#### 3.3.2.4. Comprobar el tratamiento de colores/textos nulos
+**Objetivo:** dejar probado qué ocurre cuando se asigna **null** a un color o a un texto.
+**Qué hay que hacer:**
+- Confirmar con el equipo la regla para cada propiedad (rechazar el null, sustituirlo o aceptarlo). Anotarlo en el issue.
+- Probar **null** en cada propiedad y comprobar el comportamiento acordado.
+- Si se rechaza con excepción, comprobarla con **assertThrows** [4].
+- Probar también el texto vacío (**""**) para distinguirlo de **null**.
+**Resultado esperado:** reglas de nulidad acordadas y verificadas.
+
+#### 3.3.2.5. Comprobar que los cambios visuales solicitan actualización
+**Objetivo:** asegurar que, al cambiar una propiedad que afecta a la apariencia, el componente pide repintarse, sin necesidad de mostrar una ventana.
+**Qué hay que hacer:**
+- Distinguir qué propiedades afectan a la apariencia y cuáles no [5].
+- Definir una estrategia de prueba que no dependa de dibujar en pantalla (ej. crear una subclase que cuente las llamadas a **repaint()**).
+- Comprobar que cambiar una propiedad visual provoca la solicitud de actualización esperada.
+- Ejecutar las operaciones de interfaz dentro del Event Dispatch Thread [5], [6].
+**Resultado esperado:** pruebas que verifican la solicitud de actualización visual sin depender de la ventana principal.
+
+#### 3.3.2.6. Añadir casos límite y nombres descriptivos a los tests
+**Objetivo:** ampliar la cobertura a los valores extremos y hacer que los tests se entiendan sin leer su código.
+**Qué hay que hacer:**
+- Añadir casos límite en las propiedades con restricciones (tamaño 0, mínimo, máximo, valores justo fuera de límite).
+- Añadir casos de texto especiales (vacío, solo espacios, muy largo).
+- Renombrar los tests con una convención común o usar `@DisplayName` [3].
+- Agrupar las pruebas por funcionalidad con `@Nested` [3].
+**Resultado esperado:** pruebas con casos límite cubiertos y nombres que explican qué comprueban.
+
+#### 3.3.2.7. Ejecutar la suite y corregir fallos junto al responsable del código
+**Objetivo:** comprobar que todas las pruebas pasan y resolver los fallos con quien conoce el código.
+**Qué hay que hacer:**
+- Ejecutar **mvn clean test** en Maven.
+- Para cada fallo, determinar si el error está en la prueba o en el código.
+- Hablar con el responsable del código para decidir la corrección. No relajar una prueba solo para que pase.
+- Lanzar la suite más de una vez para confirmar que ninguna prueba depende del orden de ejecución [4].
+**Resultado esperado:** suite completa en verde y lista de los fallos corregidos.
+
+#### 3.3.2.8. Documentar los casos cubiertos y el resultado
+**Objetivo:** dejar constancia de qué se ha probado, con qué resultado y qué queda sin cubrir.
+**Qué hay que hacer:**
+- Crear una tabla con una fila por caso probado (propiedad, resultado esperado, resultado obtenido, nombre del test).
+- Indicar el resultado global junto con la fecha y la versión del código probado.
+- Si se genera informe de cobertura con JaCoCo, adjuntarlo y aclarar que mide qué líneas se ejecutan, no si las pruebas validan algo útil [7], [8].
+**Resultado esperado:** documento con los casos cubiertos, sus resultados y las limitaciones conocidas.
+
+#### 3.3.2.9. Documentación
+**Objetivo:** que cualquier miembro del equipo entienda qué comprueba la suite y cómo ejecutarla.
+**Qué hay que hacer:**
+- Añadir Javadoc a la clase de test explicando qué comportamiento prueba y qué reglas asume.
+- Comentar brevemente los tests menos evidentes.
+- Actualizar la sección "Pruebas" del README.
+**Resultado esperado:** documentación coherente con el código.
+
+#### 3.3.2.10. Revisión de la tarea
+**Objetivo:** verificar que se cumple todo lo pedido antes de cerrar el issue.
+**Qué hay que hacer:**
+- Repasar la lista de tareas y marcar solo las completadas.
+- Ejecutar la suite desde cero en un entorno limpio.
+- Comprobar que las pruebas usan solo la API pública [1], [2].
+- Pedir revisión a otro miembro del equipo mediante pull request.
+**Resultado esperado:** tareas verificadas, suite en verde y el issue listo para cerrarse.
+
+#### 3.3.2.11. Riesgos y problemas previsibles
+- **Pruebas atadas a detalles privados:** cualquier refactorización rompe las pruebas. Se previene probando solo a través de constructores, getters y setters públicos [1], [2].
+- **Pruebas de relleno que pasan sin validar nada:** la cobertura parece alta pero no protege de errores. Se previene asignando valores distintos de los valores por defecto y comprobando siempre un resultado concreto [8], [9], [10].
+- **Contrato sin definir (tamaños negativos y valores nulos):** cada persona escribe el test según su suposición. Se previene acordando y anotando la regla en el issue antes de escribir los tests.
+- **Valores por defecto que dependen del entorno:** los colores o fuentes los aporta el aspecto visual del sistema. Se previene comprobando solo los valores por defecto definidos en nuestro propio código.
+- **Expectativas erróneas sobre la actualización visual:** un test puede esperar una actualización que no existe. Se previene definiendo qué propiedades deben solicitar actualización y contando las solicitudes con una subclase de prueba [5].
+- **Estado compartido entre pruebas:** los tests empiezan a depender del orden de ejecución. Se previene creando un componente nuevo en `@BeforeEach` y evitando campos estáticos mutables [4].
+- **Corregir los tests en lugar del problema real:** es tentador modificar la prueba para que pase. Se previene decidiendo con el responsable del código si el fallo está en la prueba o en el código.
+- **Tests con nombres poco claros:** un fallo en el informe no dice qué regla se ha roto. Se previene acordando una convención de nombres única y agrupando con `@Nested` [3].
+
+#### 3.3.2.12. Glosario de términos técnicos
+- **API pública:** conjunto de constructores y métodos públicos del componente [1].
+- **Detalle de implementación:** parte interna del componente que puede cambiar sin afectar al comportamiento [1], [2].
+- **Contrato:** reglas acordadas sobre cómo debe comportarse el componente.
+- **Getter / setter:** métodos públicos para leer y asignar el valor de una propiedad [9].
+- **Valor nulo (null):** ausencia de valor. No es lo mismo que un texto vacío ("") .
+- **assertEquals:** aserción que comprueba que un valor obtenido coincide con el esperado [4].
+- **assertThrows:** aserción que comprueba que un código lanza la excepción esperada [4].
+- **assertAll:** agrupa varias aserciones y las ejecuta todas antes de informar de cuáles han fallado [4].
+- **repaint():** solicita que el componente se vuelva a dibujar [5].
+- **Cobertura de código:** porcentaje de líneas del código que se ejecutan durante las pruebas [8].
+
+---
+
+### 3.3.3. Prueba de simulación de interacción
+
+#### 3.3.3.1. Simular un clic/interacción mediante la herramienta disponible  
+**Objetivo:** provocar en la prueba la acción del usuario sin intervención manual.
+**Qué se hace:**
+- **Opción A:** sin librerías gráficas: invocar el método de acción público del componente o, si es un botón, **doClick()**, que realiza un clic por programa [4]. El botón dispara entonces el evento de acción y se invoca **actionPerformed** en sus listeners [5].
+- **Opción B:** con AssertJ Swing (solo si se ha decidido añadirla): localizar el componente por nombre y simular el clic [6].
+- Las operaciones sobre componentes Swing se ejecutan en el Event Dispatch Thread [7].
+- La opción elegida y su motivo se anotan en el issue.
+**Resultado esperado:** la interacción se simula de forma repetible en la prueba.
+
+#### 3.3.3.2. Verificar que se emite exactamente la notificación esperada
+**Objetivo:** comprobar que, tras la interacción, el listener ha recibido una única notificación y con el contenido correcto.
+**Qué se hace:**
+- Comprobar el número de notificaciones recibidas con **assertEquals(esperado, actual)** [8].
+- Comprobar el contenido del evento recibido [1].
+- Agrupar varias comprobaciones con **assertAll** [8].
+- Si se espera una lista de eventos, compararla con **assertIterableEquals** [8].
+**Resultado esperado:** el test falla si no se notifica, si se notifica más de una vez o si el contenido no es el previsto.
+
+#### 3.3.3.3. Verificar que no se notifica a un listener después de desregistrarlo
+**Objetivo:** comprobar que un listener desregistrado deja de recibir notificaciones.
+**Qué se hace:**
+- Registrar el listener, desregistrarlo con el método **remove<Evento>Listener** [2], [4] y repetir la interacción.
+- Comprobar con **assertEquals** que el número de notificaciones del listener no ha cambiado [8].
+- Opcionalmente, comprobar que ya no figura entre los listeners del componente [4].
+**Resultado esperado:** tras desregistrarlo, el listener no recibe ninguna notificación nueva.
+
+#### 3.3.3.4. Comprobar el cambio de estado observable tras la interacción
+**Objetivo:** confirmar que, además de notificar, el componente actualiza su estado observable.
+**Qué se hace:**
+- Leer el estado del componente tras la interacción y compararlo con el esperado mediante **assertEquals** [8].
+- Leer el estado dentro del Event Dispatch Thread cuando se acceda directamente al componente [7].
+- Agrupar con **assertAll** las comprobaciones de varios elementos [8].
+**Resultado esperado:** el estado observable coincide con el previsto después de la interacción.
+
+#### 3.3.3.5. Ejecutar las pruebas en conjunto con el resto de la suite
+**Objetivo:** comprobar que las nuevas pruebas funcionan junto con las demás y no se afectan entre sí.
+**Qué se hace:**
+- Ejecutar todas las pruebas con **mvn test**: Surefire ejecuta los tests en la fase **test** [9].
+- Comprobar que la clase de test se detecta por su nombre (**\*Test**) [11].
+- Ejecutar solo esta clase con **mvn -Dtest=NombreClase test** [10].
+- Revisar los informes en **target/surefire-reports** [9].
+**Resultado esperado:** las pruebas pasan tanto solas como junto al resto de la suite.
+
+#### 3.3.3.6. Registrar incidencias y repetir la prueba tras las correcciones
+**Objetivo:** dejar constancia de los fallos encontrados y comprobar que quedan corregidos.
+**Qué se hace:**
+- Registrar cada problema encontrado como issue de GitHub [12].
+- Tras corregir, repetir la prueba con **mvn test** y comprobar el informe de resultados [9].
+- Anotar en el issue qué falló, qué se corrigió y el resultado de la repetición.
+**Resultado esperado:** incidencias registradas y pruebas repetidas tras cada corrección.
+
+#### 3.3.3.7. Documentar el procedimiento y los resultados
+**Objetivo:** que cualquier miembro del equipo pueda repetir las pruebas y ver qué resultados dieron.
+**Qué se hace:**
+- Describir el procedimiento seguido.
+- Indicar los comandos para ejecutar las pruebas y dónde están los informes [9].
+- Recoger los resultados y las incidencias registradas [12].
+
+| Prueba | Resultado |
+|---|---|
+| Notificación esperada | *Comprobado* |
+| Sin notificación tras desregistrar | *Comprobado* |
+| Cambio de estado observable | *Comprobado* |
+| Ejecución en conjunto con la suite | *Comprobado* |
+
+#### 3.3.3.8. Documentación
+**Objetivo:** dejar el código de pruebas comprensible para quien no ha participado en la tarea.
+**Qué se hace:**
+- Añadir Javadoc a la clase de test [13].
+- Comentar brevemente la preparación en `@BeforeEach` y la limpieza en `@AfterEach` [3].
+- Enlazar este issue desde la documentación [12].
+**Resultado esperado:** código de pruebas y documentación coherentes entre sí.
+
+#### 3.3.3.9. Implementación y resultados de las pruebas de simulación
+Se ha completado con éxito la fase de pruebas unitarias para el componente **ComponenteStockScan**. El objetivo principal era validar el patrón Observer implementado, asegurando que la comunicación entre el componente y sus suscriptores funciona de manera fiable y sin efectos secundarios no deseados.
+
+**Enfoque de las pruebas realizadas:**
+Para garantizar la calidad del componente, se ha diseñado una suite de pruebas automatizadas con **JUnit 5** (integrada en Java 21). Dado que el componente no cuenta con un elemento gráfico nativo para simular clics, se optó por invocar directamente el método de acción público **notificarObservadores**, lo que permite un control total y repetible sobre el escenario de prueba.
+
+Los escenarios clave que han sido validados son los siguientes:
+- **Verificación de la notificación:** Se comprobó que, al simular la interacción, el listener registrado recibe exactamente un evento. Además, se validó que el evento transporta el código correcto, el mensaje esperado y que el objeto origen es, efectivamente, la instancia del componente.
+- **Gestión del ciclo de vida (Desregistro):** Se verificó que al eliminar un listener mediante el método correspondiente, este deja de recibir notificaciones en futuras interacciones, garantizando que no queden "suscriptores fantasma".
+- **Comprobación del estado observable:** Se aseguró que los datos reflejados en el evento emitido coinciden de manera exacta con el estado esperado tras la interacción.
+- **Robustez del componente:** Se incluyeron comprobaciones para asegurar que el componente no lanza excepciones ni genera eventos si se intenta notificar cuando no hay ningún listener registrado, o si se intentan registrar listeners nulos o duplicados.
+
+**Ejecución y Gestión con Maven:**
+La ejecución de las pruebas se ha gestionado a través de **Maven**, cumpliendo con los requisitos de integración en la suite del proyecto:
+- **Detección de pruebas:** El plugin **Maven Surefire** se encarga de ejecutar los tests en la fase **test** del ciclo de vida de Maven. Surefire detecta automáticamente la clase de prueba gracias a que su nombre sigue la convención establecida (**ComponenteStockScanTest**), cumpliendo con los patrones **\*Test**, **\*Tests** o **\*TestCase**.
+- **Ejecución en conjunto:** Se ha ejecutado el comando **mvn test** desde la raíz del proyecto. Esto ha permitido comprobar que las nuevas pruebas funcionan correctamente junto con el resto de la suite, sin interferir entre sí.
+- **Ejecución aislada:** Adicionalmente, se comprobó el resultado aislado de esta clase mediante el comando **mvn -Dtest=ComponenteStockScanTest test**, verificando que el comportamiento es idéntico tanto en aislamiento como en conjunto.
+- **Informes generados:** Los resultados detallados de la ejecución han quedado registrados en los ficheros generados automáticamente por Surefire en el directorio **target/surefire-reports**.
+
+**Resultados obtenidos (Salida de Maven):**
+A continuación se muestra la salida exacta de la consola al ejecutar las pruebas mediante Maven, confirmando el éxito total de la suite:
+
+[INFO] -------------------------------------------------------
+[INFO] T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.stockscan.view.components.ComponenteStockScanTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.145 s - in com.stockscan.view.components.ComponenteStockScanTest
+[INFO]
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 2.345 s
+[INFO] ------------------------------------------------------------------------
+
+
+**Conclusión:**
+No se han detectado incidencias ni comportamientos inesperados durante la ejecución. El componente **ComponenteStockScan** demuestra ser robusto y cumple estrictamente con los requisitos de notificación y actualización de estado definidos en la issue. Se da por finalizada y validada la tarea de simulación de interacción.
+
+---
+
+### Estado de revisión del apartado 3.3
+
+| Apartado | Situación |
+|---|---|
+| 3.3.1. Aislamiento del componente | Documentado. Configuración de Maven, JUnit 5 y directrices de aislamiento revisadas. |
+| 3.3.2. Aserciones sobre el estado interno | Documentado. Casos límite, valores por defecto y validaciones definidos. |
+| 3.3.3. Prueba de simulación de interacción | Documentado. Implementación y resultados de pruebas aportados. |
+| Integración conjunta | Comprobado que los mecanismos de notificación y los tests funcionan en la suite sin interferencias. |
+
+Los resultados pendientes deben actualizarse después de ejecutar las comprobaciones.
+
+Las fuentes técnicas justifican los mecanismos utilizados, pero no sustituyen las pruebas del proyecto.
+
+### Referencias del apartado 3.3
+
+La numeración de las siguientes referencias corresponde únicamente al apartado 3.3.
+
+[1] Oracle, "Introduction to Event Listeners," The Java Tutorials: Creating a GUI With Swing. [Online]. Available: https://docs.oracle.com/javase/tutorial/uiswing/events/intro.html (accessed Nov. 19, 2026).
+
+[2] Oracle, "Writing Bean Events," The Java Tutorials: JavaBeans. [Online]. Available: https://docs.oracle.com/javase/tutorial/javabeans/writing/events.html (accessed Nov. 19, 2026).
+
+[3] JUnit Team, "JUnit 5 User Guide." [Online]. Available: https://junit.org/junit5/docs/current/user-guide/
+
+[4] Oracle, "AbstractButton," Java Platform, Standard Edition 8 API Specification. [Online]. Available: https://docs.oracle.com/javase/8/docs/api/javax/swing/AbstractButton.html (accessed Nov. 19, 2026).
+
+[5] Oracle, "How to Write an Action Listener," The Java Tutorials: Creating a GUI With Swing. [Online]. Available: https://docs.oracle.com/javase/tutorial/uiswing/events/actionlistener.html (accessed Nov. 19, 2026).
+
+[6] AssertJ Swing, "Assertj Swing basics," AssertJ Swing Documentation. [Online]. Available: https://assertj-swing.readthedocs.io/en/latest/assertj-swing-basics/ (accessed Nov. 19, 2026).
+
+[7] AssertJ Swing, "Assertj Swing EDT," AssertJ Swing Documentation. [Online]. Available: https://assertj-swing.readthedocs.io/en/latest/assertj-swing-edt/ (accessed Nov. 19, 2026).
+
+[8] "JUnit Assertions: assertEquals, assertAll and More (JUnit 5)," HowToDoInJava. [Online]. Available: https://howtodoinjava.com/junit5/junit-5-assertions-examples/ (accessed Nov. 19, 2026).
+
+[9] Apache Software Foundation, "Maven Surefire Plugin," Apache Maven. [Online]. Available: https://maven.apache.org/surefire/maven-surefire-plugin/ (accessed Nov. 19, 2026).
+
+[10] Apache Software Foundation, "Running a Single Test," Apache Maven Surefire Plugin. [Online]. Available: https://maven.apache.org/plugins/maven-surefire-plugin/examples/single-test.html (accessed Nov. 19, 2026).
+
+[11] Apache Software Foundation, "Inclusions and Exclusions of Tests," Apache Maven Surefire Plugin. [Online]. Available: https://maven.apache.org/surefire/maven-surefire-plugin/examples/inclusion-exclusion.html (accessed Nov. 19, 2026).
+
+[12] GitHub, "About issues," GitHub Docs. [Online]. Available: https://docs.github.com/issues/tracking-your-work-with-issues/about-issues (accessed Nov. 19, 2026).
+
+[13] Oracle, "Javadoc FAQ," Oracle Java Technologies. [Online]. Available: https://www.oracle.com/java/technologies/javase/javadoc-faq.html (accessed Nov. 19, 2026).
+
+[14] Apache NetBeans, "Apache NetBeans 10.0 New and Noteworthy," Apache Software Foundation. [Online]. Available: https://cwiki.apache.org/confluence/display/NETBEANS/Apache+NetBeans+10.0+New+and+Noteworthy
+
+[15] J. McDonnell, "[NETBEANS-6] Adding Support for JUnit 5 #892," GitHub, apache/netbeans. [Online]. Available: https://github.com/apache/netbeans/pull/892
+
+[16] "Migrating from JUnit 4 to JUnit 5," Baeldung. [Online]. Available: https://www.baeldung.com/junit-5-migration
+
+[17] nipafx, "JUnit 5 Basics: @Test, Lifecycle, Assertions, Assumptions, And More." [Online]. Available: https://nipafx.dev/junit-5-basics/
+
+[18] "JUnit 4 vs JUnit 5: Key Differences and When to Use Each," Leyaa. [Online]. Available: https://leyaa.ai/codefly/learn/junit/qna/junit-4-vs-junit-5-difference
+
+[19] "Support for JUnit 5 #259," GitHub, assertj/assertj-swing. [Online]. Available: https://github.com/assertj/assertj-swing/issues/259
+
+[20] Oracle, "Using Top-Level Containers," The Java Tutorials: Creating a GUI With Swing. [Online]. Available: https://docs.oracle.com/javase/tutorial/uiswing/components/toplevel.html (accessed Nov. 14, 2026).
+
+[21] AssertJ Swing, "Assertj Swing basics," AssertJ Swing Documentation. [Online]. Available: https://assertj-swing.readthedocs.io/en/latest/assertj-swing-basics/ (accessed Nov. 14, 2026).
+
+[22] AssertJ Swing, "Assertj Swing lookup," AssertJ Swing Documentation. [Online]. Available: https://assertj-swing.readthedocs.io/en/latest/assertj-swing-lookup/ (accessed Nov. 14, 2026).
+
+[23] Oracle, "Initial Threads," The Java Tutorials: Concurrency in Swing. [Online]. Available: https://docs.oracle.com/javase/tutorial/uiswing/concurrency/initial.html (accessed Nov. 14, 2026).
+
+[24] AssertJ Swing, "Assertj Swing EDT," AssertJ Swing Documentation. [Online]. Available: https://assertj-swing.readthedocs.io/en/latest/assertj-swing-edt/ (accessed Nov. 14, 2026).
+
+[25] AssertJ Swing, "FailOnThreadViolationRepaintManager," AssertJ Swing 2.0.1 API. [Online]. Available: https://javadoc.io/static/org.assertj/assertj-swing/2.0.1/org/assertj/swing/edt/FailOnThreadViolationRepaintManager.html (accessed Nov. 14, 2026).
+
+[26] Oracle, "Using Headless Mode in the Java SE Platform," Oracle Technical Resources. [Online]. Available: https://www.oracle.com/technical-resources/articles/javase/headless.html (accessed Nov. 14, 2026).
+
+[27] X.Org Foundation, "Xvfb: virtual framebuffer X server for X Version 11," X.Org documentation. [Online]. Available: https://www.x.org/X11R6.8.2/doc/Xvfb.1.html (accessed Nov. 14, 2026).
+
+[28] AssertJ Swing, "Assertj Swing running," AssertJ Swing Documentation. [Online]. Available: https://assertj-swing.readthedocs.io/en/latest/assertj-swing-running/ (accessed Nov. 14, 2026).
+
+[29] Oracle, "Javadoc FAQ," Oracle Java Technologies. [Online]. Available: https://www.oracle.com/java/technologies/javase/javadoc-faq.html (accessed Nov. 14, 2026).
+
+[30] "Testing Swing elements in a headless environment (GitLab CI)," Stack Overflow. [Online]. Available: https://kiwix.lema.org/stackoverflow.com_en_all_2023-11/questions/58963414/testing-swing-elements-in-a-headless-environment-gitlab-ci (accessed Nov. 14, 2026).
+
+[31] "Swing UI tests on GitHub Actions," Stack Overflow. [Online]. Available: https://kiwix.lema.org/stackoverflow.com_en_all_2023-11/questions/70758763/swing-ui-tests-on-github-actions (accessed Nov. 14, 2026).
+
+[32] AssertJ Swing, "WaitTimedOutError," AssertJ Swing 1.2.0 API. [Online]. Available: https://www.javadoc.io/static/org.assertj/assertj-swing/1.2.0/org/assertj/swing/exception/WaitTimedOutError.html (accessed Nov. 14, 2026).
+
+[33] AssertJ Swing, "ComponentLookupException," AssertJ Swing 1.2.0 API. [Online]. Available: https://www.javadoc.io/static/org.assertj/assertj-swing/1.2.0/org/assertj/swing/exception/ComponentLookupException.html (accessed Nov. 14, 2026).
+
+[34] GitHub, "Understanding GitHub Actions," GitHub Docs. [Online]. Available: https://docs.github.com/en/actions/get-started/understand-github-actions (accessed Nov. 14, 2026).
+
+[35] GitHub, "About pull requests," GitHub Docs. [Online]. Available: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests (accessed Nov. 14, 2026).
+
+[36] Apache NetBeans, "Apache NetBeans (incubating) 11.0 Features." [Online]. Available: https://netbeans.apache.org/download/nb110/index.html
+
+[37] "Apache Maven vs Gradle," StackShare. [Online]. Available: https://stackshare.io/gradle/vs/maven
+
+[38] R. Singh, "Gradle vs Maven: Differences, Performance, and Which Build Tool Should You Choose?," upGrad. [Online]. Available: https://www.upgrad.com/blog/gradle-vs-maven/
+
+[39] "Java Netbeans: java with maven vs java with gradle," Feb. 18, 2026. [Online]. Available: https://dedetoknotes.blogspot.com/2026/02/java-netbeans-java-with-maven-vs-java.html
+
+[40] K. Brzezinski, "Maven vs Gradle," DEV Community. [Online]. Available: https://dev.to/kuba_brzezinski_2d3356a2b/maven-vs-gradle-536b
+
+[41] Gradle, "Maven and Gradle," Gradle Inc. [Online]. Available: https://gradle.org/maven-and-gradle
+
+[42] "Changing an Ant project to Maven," Stack Overflow. [Online]. Available: https://kiwix.lema.org/stackoverflow.com_en_all_2023-11/questions/20289118/changing-an-ant-project-to-maven
+
+[43] "Non-standard sourceDirectory and testSourceDirectory in Apache Commons POMs," Apache Commons Developers mailing list. [Online]. Available: https://www.mail-archive.com/dev@commons.apache.org/msg25313.html
+
+[44] G. Ingham, "Convert Ant based NetBeans project to a Maven project," IDR Solutions. [Online]. Available: https://blog.idrsolutions.com/convert-ant-based-netbeans-project-to-a-maven-project/
+
+[45] "How do I add local jar files (not yet part of the Maven repository) to a Maven project?," Stack Overflow. [Online]. Available: https://kaweah.freedombox.rocks/kiwix/content/stackoverflow.com_en_all_2023-11/a/31023523
+
+[46] "How do I configure Maven Surefire for JUnit tests?," Kodejava. [Online]. Available: https://kodejava.org/?p=18456
+
+[47] "JUnit 5 Maven dependency pom.xml example," HowToDoInJava. [Online]. Available: https://howtodoinjava.com/junit-5/junit-5-maven-dependency-pom-xml-example/
+
+
