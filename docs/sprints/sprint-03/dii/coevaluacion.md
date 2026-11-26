@@ -18,7 +18,7 @@
 
 * **Carmen Monge:** [Resumen de tareas realizadas y puntos fuertes]
 * **Álvaro López:** He trabajado en los estados de feedback visual, el indicador de foco y la conexión de las acciones con las notificaciones del componente. También he preparado su incorporación visual en `StockPanel`, documentación con fuentes oficiales y evidencias en GIF. He apoyado la documentación de constructores y accesores. Mis puntos fuertes han sido el cuidado de la interfaz, el interés por aprender y la preparación del trabajo para facilitar su revisión. La integración de la tarea #75 compila correctamente y queda pendiente de verificación visual y funcional.
-* **Elena Saez:** [Resumen de tareas realizadas y puntos fuertes]
+* **Elena Saez:** A lo largo de esta práctica se ha desarrollado e integrado el componente `ComponenteStockScan` bajo el patrón Observer, implementando la lógica de eventos y su interfaz visual. Se ha diseñado una suite de pruebas unitarias con JUnit 5 en Java 21, validando la emisión de notificaciones, el desregistro de listeners y el estado observable. Finalmente, se ha verificado la integración completa mediante Maven Surefire y se ha revisado la interfaz en ejecución, documentando los resultados y detectando detalles de UI para su corrección.
 * **Angel Luis:** [Resumen de tareas realizadas y puntos fuertes]
 
 ##  Retrospectiva
