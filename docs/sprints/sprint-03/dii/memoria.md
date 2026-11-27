@@ -22,7 +22,7 @@ Elena Sáez · Ángel Luis Sánchez
 **Fecha de edición:** 27 de noviembre de 2026  
 **Fecha de cierre del sprint:** 27 de noviembre de 2026
 
-**Estado del documento:** recopilación estructurada para revisión final
+**Estado del documento:** finalizado
 
 </div>
 
