@@ -118,6 +118,14 @@ Elena Sáez · Ángel Luis Sánchez
 - [5. Integración y consumo del componente en el proyecto transversal](#5-integración-y-consumo-del-componente-en-el-proyecto-transversal)
   - [5.1. Vinculación de la librería](#51-vinculación-de-la-librería)
   - [5.2. Incorporación visual](#52-incorporación-visual)
+    - [5.2.1. Objetivo y selección de la pantalla](#521-objetivo-y-selección-de-la-pantalla)
+    - [5.2.2. Incorporación al formulario de NetBeans](#522-incorporación-al-formulario-de-netbeans)
+    - [5.2.3. Configuración mediante la API pública](#523-configuración-mediante-la-api-pública)
+    - [5.2.4. Distribución y actualización visual](#524-distribución-y-actualización-visual)
+    - [5.2.5. Conservación de la pantalla existente](#525-conservación-de-la-pantalla-existente)
+    - [5.2.6. Notificación y alcance de la acción](#526-notificación-y-alcance-de-la-acción)
+    - [5.2.7. Revisión y resultados registrados](#527-revisión-y-resultados-registrados)
+    - [5.2.8. Resultado y alcance de la entrega](#528-resultado-y-alcance-de-la-entrega)
   - [5.3. Conexión con el flujo de datos](#53-conexión-con-el-flujo-de-datos)
     - [5.3.1. Investigación](#531-investigación)
     - [5.3.2. Implementación](#532-implementación)
@@ -2227,7 +2235,133 @@ Verifiqué que Java cargaba `ComponenteStockScan`, `StockScanEvent` y `StockScan
 
 ### 5.2. Incorporación visual
 
-<!-- Espacio reservado para el fragmento de memoria: Incorporación visual -->
+Este apartado corresponde a la tarea **3.5.2. Incorporación visual — #75** del tablero del sprint. Se presenta como 5.2 para mantener la numeración de esta memoria.
+
+#### 5.2.1. Objetivo y selección de la pantalla
+
+El objetivo de esta tarea fue incorporar el componente reutilizable `ComponenteAccionStockScan` a una pantalla activa de StockScanE y comprobar su integración con la interfaz existente.
+
+Se seleccionó `StockPanel`, la pantalla de inventario. El componente se sitúa entre los filtros de categorías y la tabla de productos, dentro de una franja blanca que incluye una descripción de la acción y el botón **«Confirmar artículo»**.
+
+Esta ubicación permite mostrar el componente dentro del contexto de gestión de productos, manteniendo visibles los filtros y la tabla.
+
+La implementación fue preparada por Álvaro López de San Román y posteriormente revisada por Elena Sáez.
+
+#### 5.2.2. Incorporación al formulario de NetBeans
+
+Se incorporaron los siguientes elementos al formulario:
+
+| Elemento | Responsabilidad |
+|---|---|
+| `panelAccionStockScan` | Contener la descripción y el componente visual. |
+| `lblAccionStockScan` | Explicar que se trata de una acción de ejemplo. |
+| `componenteAccionStockScan` | Mostrar el botón y gestionar su interacción y notificación. |
+
+La creación de los elementos se realiza en `initComponents()`. La configuración del componente y el registro del receptor de eventos se completan en `configurarAccionStockScan()`.
+
+Se actualizaron los archivos `StockPanel.java` y `StockPanel.form` para mantener la incorporación dentro de la estructura del formulario de NetBeans.
+
+Los archivos relacionados con esta integración son:
+
+- `src/com/stockscan/view/pages/StockPanel.java`.
+- `src/com/stockscan/view/pages/StockPanel.form`.
+- `src/com/stockscan/view/components/ComponenteAccionStockScan.java`.
+
+#### 5.2.3. Configuración mediante la API pública
+
+El componente se configura mediante sus métodos públicos, sin acceder directamente al botón interno desde la pantalla.
+
+| Propiedad | Configuración utilizada |
+|---|---|
+| Texto | `setTexto("Confirmar artículo")`. |
+| Tamaño preferido | `setPreferredSize(new Dimension(260, 60))`. |
+| Disponibilidad | `setEnabled(true)`. |
+| Colores y foco | Valores predeterminados definidos dentro del componente. |
+
+Los métodos `getTexto()` y `setTexto(...)` permiten consultar y modificar el texto. Esta organización sigue la convención de propiedades JavaBeans, basada en métodos de consulta y modificación [18].
+
+El método público `setTexto(...)` actualiza internamente el texto del botón mediante `setText(...)`. Ambos métodos pertenecen a niveles distintos: la pantalla utiliza la API del componente y este gestiona su botón interno.
+
+La apariencia predeterminada fue considerada coherente con el resto de la interfaz durante la revisión visual. No obstante, esta versión no incorpora métodos públicos específicos para configurar los colores del botón o del borde de foco.
+
+Por tanto, se distingue entre la aceptación visual de los valores predeterminados y la posibilidad de personalizar esos valores mediante la API pública.
+
+#### 5.2.4. Distribución y actualización visual
+
+El contenedor utiliza `BorderLayout` para distribuir sus elementos:
+
+- La descripción se coloca en la región `CENTER`.
+- El componente se coloca en la región `EAST`.
+
+`BorderLayout` organiza los componentes por regiones y distribuye el espacio disponible teniendo en cuenta sus tamaños preferidos. En particular, la región central ocupa el espacio restante [124].
+
+Después de configurar el componente, se invocan:
+
+- `revalidate()`, para solicitar una nueva validación de la distribución.
+- `repaint()`, para solicitar la actualización de la representación visual [1].
+
+Durante la revisión realizada por Elena Sáez se probó la ventana al maximizarla y restaurarla. Según el resultado registrado, el componente mantuvo su alineación y no se observaron deformaciones ni solapamientos con otros elementos de `StockPanel`.
+
+#### 5.2.5. Conservación de la pantalla existente
+
+La incorporación mantiene los botones, los nombres de variables, los iconos, los filtros, los datos de ejemplo y los manejadores de eventos existentes.
+
+La tabla se desplaza hacia abajo para dejar espacio a la nueva franja.
+
+La revisión comunicada por Elena Sáez indica que la pantalla carga correctamente y que la incorporación no interfiere con la disposición de la tabla, los filtros ni el flujo de navegación comprobado.
+
+Estas conclusiones corresponden a las comprobaciones realizadas durante la revisión de esta tarea.
+
+#### 5.2.6. Notificación y alcance de la acción
+
+Se registra una instancia de `FeedbackController` como receptora de las notificaciones del componente.
+
+Cuando se activa el botón, el componente utiliza el código de ejemplo `ART-01`. La descripción visible informa de que se trata de una acción de demostración.
+
+El alcance de esta integración es el siguiente:
+
+- Mostrar el componente dentro de la pantalla de inventario.
+- Permitir la interacción con el botón.
+- Emitir la notificación y entregarla al receptor registrado.
+
+La acción no está vinculada a la fila seleccionada en la tabla. No confirma un producto seleccionado, no modifica el inventario y no guarda datos en la base de datos.
+
+Esta distinción evita interpretar la demostración del mecanismo de eventos como una operación de negocio completa. Este alcance corresponde a la incorporación visual aquí descrita; la conexión con la lógica de negocio se documenta por separado en el apartado 5.3.
+
+#### 5.2.7. Revisión y resultados registrados
+
+Después de preparar la implementación, se compartió el proyecto con Elena Sáez para realizar la revisión de la interfaz y del comportamiento integrado.
+
+La siguiente tabla resume los resultados comunicados:
+
+| ID | Comprobación | Resultado registrado |
+|---|---|---|
+| IV-01 | Compilación y apertura de la pantalla. | Compilación correcta y carga de la vista sin problemas. |
+| IV-02 | Texto y dimensiones del componente. | Botón «Confirmar artículo» con la configuración prevista. |
+| IV-03 | Coherencia de la apariencia. | Apariencia predeterminada considerada coherente con la interfaz. |
+| IV-04 | Alineación al maximizar y restaurar. | No se observaron deformaciones ni solapamientos. |
+| IV-05 | Conservación del diseño y navegación. | No se comunicaron interferencias en los elementos y recorridos comprobados. |
+| IV-06 | Activación del botón. | Revisada la acción de ejemplo identificada mediante `ART-01`. |
+| IV-07 | Necesidad de correcciones visuales. | No se comunicaron incidencias visuales que requirieran corrección. |
+
+La revisión finalizó con el visto bueno de Elena Sáez para cerrar la tarea.
+
+Los resultados anteriores proceden de su comentario de revisión. El material aportado para este fragmento no incluye una captura adicional de esa comprobación.
+
+#### 5.2.8. Resultado y alcance de la entrega
+
+El componente queda incorporado a `StockPanel`, dentro de una franja situada entre los filtros y la tabla de productos.
+
+La entrega incluye:
+
+- Incorporación al formulario de NetBeans.
+- Configuración del texto, tamaño preferido y disponibilidad.
+- Uso de la apariencia predeterminada del componente.
+- Registro de un controlador receptor de notificaciones.
+- Documentación de los cambios en `LEEME_TAREA_75.md`.
+- Revisión de compilación, disposición visual e interacción por otra integrante del equipo.
+
+La revisión valida la integración visual descrita. La personalización de colores mediante métodos públicos y la vinculación de la acción con un producto real no forman parte de lo implementado en esta versión de la tarea.
 
 ### 5.3. Conexión con el flujo de datos
 
@@ -2729,3 +2863,5 @@ La documentación recoge la conexión entre interacción, notificación y respue
 [122] Oracle, «PropertyChangeSupport (Java SE 21)», *Java SE 21 API Specification*. [En línea]. Disponible en: https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/beans/PropertyChangeSupport.html
 
 [123] Oracle, «SwingWorker (Java SE 21)», *Java SE 21 API Specification*. [En línea]. Disponible en: https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/javax/swing/SwingWorker.html
+
+[124] Oracle Corporation, “BorderLayout,” *Java SE 21 API Specification*. [En línea]. Disponible en: https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/BorderLayout.html. [Consulta registrada en el fragmento original: 26 de noviembre de 2026].
