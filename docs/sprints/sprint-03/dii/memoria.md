@@ -24,6 +24,12 @@
   - [3.2.3.7. Plan de verificación](#3237-plan-de-verificación)
 - [Estado de revisión del apartado 3.2](#estado-de-revisión-del-apartado-32)
 - [Referencias del apartado 3.2](#referencias-del-apartado-32)
+- [3.4 Documentación de la API técnica y empaquetado del artefacto](#34-documentación-de-la-api-técnica-y-empaquetado-del-artefacto)
+  - [3.4.1 Documentación en código con JavaDoc](#341-documentación-en-código-con-javadoc)
+  - [3.4.2 Compilación del artefacto reutilizable](#342-compilación-del-artefacto-reutilizable)
+  - [3.4.3 Generación de la documentación técnica](#343-generación-de-la-documentación-técnica)
+- [3.5.1 Vinculación de la librería](#351-vinculación-de-la-librería)
+
 
 ### 3.2.1. Captura de eventos de bajo nivel
 
@@ -1044,3 +1050,14 @@ Como resultado, el apartado 3.4 produjo dos archivos complementarios. **`stocksc
 [21] StockScan Team, “3.4.3 Generación de la documentación técnica,” actividad n.º 73, con el procedimiento y las comprobaciones realizadas, GitHub, 2026. [En línea]. Disponible en: <https://github.com/stockscan-team/stockscan-dii/issues/73>.
 
 [22] StockScan Team, “Documentación JavaDoc de StockScan SGA,” sitio HTML distribuido en `stockscan-javadoc.zip`, 2026. [En línea]. Disponible en: <https://github.com/stockscan-team/stockscan-sga/blob/41764e5/StockScanE/dist/stockscan-javadoc.zip>.
+
+
+### 3.5.1 Vinculación de la librería
+
+Para que el proyecto transversal `StockScanE` pudiera utilizar el componente de escaneo, incorporé el JAR generado en la tarea 3.4.2 siguiendo estos pasos:
+
+1. Copié `stockscan-componente-1.0.0.jar` en la carpeta `lib` del proyecto.
+2. En `nbproject/project.properties`, añadí la ruta relativa `lib/stockscan-componente-1.0.0.jar` a las bibliotecas de compilación (`javac.classpath`). Así, NetBeans puede localizar el JAR en cualquier equipo que descargue el proyecto.
+3. En `build.xml`, excluí de la compilación de la aplicación las cuatro clases e interfaces que ya contiene el JAR. De esta forma, la aplicación utiliza la biblioteca y evita duplicar esas clases.
+
+**Comprobación.** Compilé el proyecto desde cero y ejecuté la prueba de notificaciones. Verifiqué que Java cargaba `ComponenteStockScan`, `StockScanEvent` y `StockScanListener` desde el JAR. El programa recibió una única notificación con el código `ART-02` y el mensaje `Stock actualizado`. [Ver el cambio en GitHub](https://github.com/stockscan-team/stockscan-sga/commit/f0987a69d2bf4c6f2bb7864bd9e0188dda7d793f)
