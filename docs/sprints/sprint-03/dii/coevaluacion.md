@@ -10,9 +10,9 @@
 | Miembro evaluado | Evalúa: Carmen Monge | Evalúa: Álvaro López | Evalúa: Elena Saez | Evalúa: Angel Luis | Media Final |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Carmen Monge** | 9.5 | 9.5 | 9.5 | 9.6 | **9.5** |
-| **Álvaro López** | 9.4 | 9 | 9.2 | 9.3 | **9.2** |
+| **Álvaro López** | 9.4 | 9 | 9.4 | 9.3 | **9.3** |
 | **Elena Sáez** | 9.2 | 9.5 | 9.5 | 9.3 | **9.4** |
-| **Ángel Luis Sánchez** | 9.2 | 9.5 | 9.4 | 9 | **9.3** |
+| **Ángel Luis Sánchez** | 9.2 | 9.5 | 9 | 9 | **9.2** |
 
 ##  Valoración individual y aportaciones clave
 
