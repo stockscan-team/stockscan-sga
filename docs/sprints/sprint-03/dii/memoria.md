@@ -1,37 +1,181 @@
-# Memoria del Sprint 03 · Desarrollo de Interfaces
+<div align="center">
+
+# STOCKSCAN
+
+## Memoria del Sprint 03
+
+### Desarrollo de Interfaces
+
+**Componentes reutilizables, eventos, pruebas e integración**
+
+**Proyecto transversal · StockScan SGA**
+
+---
+
+**Equipo**
+
+Carmen Monge · Álvaro López de San Román  
+Elena Sáez · Ángel Luis Sánchez
+
+**Scrum Master:** Carmen Monge
+
+**Fecha de edición:** 27 de noviembre de 2026  
+**Fecha de cierre del sprint:** pendiente de completar
+
+**Estado del documento:** recopilación estructurada para revisión final
+
+</div>
+
+---
+
+## Índice general
+
+- [Presentación y alcance](#apartado-001)
+- [Entorno y organización del trabajo](#apartado-002)
+- [3.1. Arquitectura de la clase, encapsulación y propiedades por defecto](#apartado-003)
+- [3.2. Implementación del modelo de eventos y respuestas](#apartado-004)
+  - [3.2.1. Captura de eventos de bajo nivel](#apartado-005)
+  - [3.2.2. Mecanismo de notificación propio](#apartado-010)
+  - [3.2.3. Disparo y feedback visual](#apartado-015)
+  - [Estado de revisión del apartado 3.2](#apartado-023)
+  - [Referencias del apartado 3.2](#apartado-024)
+- [3.3. Pruebas automatizadas y validación de estados aislados](#apartado-025)
+  - [3.3.1. Aislamiento del componente](#apartado-026)
+  - [3.3.2. Aserciones sobre el estado interno](#apartado-040)
+  - [3.3.3. Prueba de simulación de interacción](#apartado-053)
+  - [Estado de revisión del apartado 3.3](#apartado-063)
+  - [Referencias del apartado 3.3](#apartado-064)
+- [3.4. Documentación de la API técnica y empaquetado del artefacto](#apartado-065)
+  - [3.4.1. Documentación en código con JavaDoc](#apartado-066)
+  - [3.4.2. Compilación del artefacto reutilizable](#apartado-067)
+  - [3.4.3. Generación de la documentación técnica](#apartado-068)
+  - [Referencias del apartado 3.4](#apartado-069)
+- [3.5. Integración en el proyecto transversal](#apartado-070)
+  - [3.5.1. Vinculación de la librería](#apartado-071)
+- [Balance y revisión final](#apartado-072)
+  - [Lista de comprobación para la entrega](#apartado-073)
+
+<details>
+<summary>Mostrar índice detallado de todos los subapartados</summary>
+
+- [Presentación y alcance](#apartado-001)
+- [Entorno y organización del trabajo](#apartado-002)
+- [3.1. Arquitectura de la clase, encapsulación y propiedades por defecto](#apartado-003)
+- [3.2. Implementación del modelo de eventos y respuestas](#apartado-004)
+  - [3.2.1. Captura de eventos de bajo nivel](#apartado-005)
+    - [3.2.1.1. Objetivo e investigación](#apartado-006)
+    - [3.2.1.2. Registro y control de eventos](#apartado-007)
+    - [3.2.1.3. Catálogo de interacciones por vista](#apartado-008)
+    - [3.2.1.4. Evidencias y revisión](#apartado-009)
+  - [3.2.2. Mecanismo de notificación propio](#apartado-010)
+    - [3.2.2.1. Elección del contrato](#apartado-011)
+    - [3.2.2.2. Implementación](#apartado-012)
+    - [3.2.2.3. Pruebas del mecanismo](#apartado-013)
+    - [3.2.2.4. Evidencias y documentación Javadoc](#apartado-014)
+  - [3.2.3. Disparo y feedback visual](#apartado-015)
+    - [3.2.3.1. Objetivo y mecanismo elegido](#apartado-016)
+    - [3.2.3.2. Estados visuales](#apartado-017)
+    - [3.2.3.3. Emisión y recepción de notificaciones](#apartado-018)
+    - [3.2.3.4. Integración en las pantallas](#apartado-019)
+    - [3.2.3.5. Accesibilidad básica](#apartado-020)
+    - [3.2.3.6. Evidencias visuales](#apartado-021)
+    - [3.2.3.7. Plan de verificación](#apartado-022)
+  - [Estado de revisión del apartado 3.2](#apartado-023)
+  - [Referencias del apartado 3.2](#apartado-024)
+- [3.3. Pruebas automatizadas y validación de estados aislados](#apartado-025)
+  - [3.3.1. Aislamiento del componente](#apartado-026)
+    - [3.3.1.1. Comprobar la configuración del proyecto y la versión de Java utilizada](#apartado-027)
+    - [3.3.1.2. Añadir JUnit 5 como dependencia de pruebas](#apartado-028)
+    - [3.3.1.3. Crear la clase de test en el paquete de pruebas correspondiente](#apartado-029)
+    - [3.3.1.4. Preparar la creación del componente sin depender de la ventana principal](#apartado-030)
+    - [3.3.1.5. Ejecutar las operaciones de UI en el Event Dispatch Thread](#apartado-031)
+    - [3.3.1.6. Añadir utilidades gráficas solo si aportan valor](#apartado-032)
+    - [3.3.1.7. Ejecutar un test mínimo para verificar que la infraestructura funciona](#apartado-033)
+    - [3.3.1.8. Documentar la configuración y cómo ejecutar las pruebas](#apartado-034)
+    - [3.3.1.9. Documentación](#apartado-035)
+    - [3.3.1.10. Riesgos y problemas previsibles en las pruebas del componente Swing](#apartado-036)
+    - [3.3.1.11. Decisión de herramienta de construcción: Maven en lugar de Gradle](#apartado-037)
+    - [3.3.1.12. Migración parcial a Maven solo para las pruebas](#apartado-038)
+    - [3.3.1.13. Glosario de términos técnicos](#apartado-039)
+  - [3.3.2. Aserciones sobre el estado interno](#apartado-040)
+    - [3.3.2.1. Verificar los valores por defecto tras usar el constructor sin argumentos](#apartado-041)
+    - [3.3.2.2. Comprobar que cada setter actualiza el valor que devuelve su getter](#apartado-042)
+    - [3.3.2.3. Verificar que los tamaños negativos se rechazan o se normalizan](#apartado-043)
+    - [3.3.2.4. Comprobar el tratamiento de colores/textos nulos](#apartado-044)
+    - [3.3.2.5. Comprobar que los cambios visuales solicitan actualización](#apartado-045)
+    - [3.3.2.6. Añadir casos límite y nombres descriptivos a los tests](#apartado-046)
+    - [3.3.2.7. Ejecutar la suite y corregir fallos junto al responsable del código](#apartado-047)
+    - [3.3.2.8. Documentar los casos cubiertos y el resultado](#apartado-048)
+    - [3.3.2.9. Documentación](#apartado-049)
+    - [3.3.2.10. Revisión de la tarea](#apartado-050)
+    - [3.3.2.11. Riesgos y problemas previsibles](#apartado-051)
+    - [3.3.2.12. Glosario de términos técnicos](#apartado-052)
+  - [3.3.3. Prueba de simulación de interacción](#apartado-053)
+    - [3.3.3.1. Simular un clic/interacción mediante la herramienta disponible](#apartado-054)
+    - [3.3.3.2. Verificar que se emite exactamente la notificación esperada](#apartado-055)
+    - [3.3.3.3. Verificar que no se notifica a un listener después de desregistrarlo](#apartado-056)
+    - [3.3.3.4. Comprobar el cambio de estado observable tras la interacción](#apartado-057)
+    - [3.3.3.5. Ejecutar las pruebas en conjunto con el resto de la suite](#apartado-058)
+    - [3.3.3.6. Registrar incidencias y repetir la prueba tras las correcciones](#apartado-059)
+    - [3.3.3.7. Documentar el procedimiento y los resultados](#apartado-060)
+    - [3.3.3.8. Documentación](#apartado-061)
+    - [3.3.3.9. Implementación y resultados de las pruebas de simulación](#apartado-062)
+  - [Estado de revisión del apartado 3.3](#apartado-063)
+  - [Referencias del apartado 3.3](#apartado-064)
+- [3.4. Documentación de la API técnica y empaquetado del artefacto](#apartado-065)
+  - [3.4.1. Documentación en código con JavaDoc](#apartado-066)
+  - [3.4.2. Compilación del artefacto reutilizable](#apartado-067)
+  - [3.4.3. Generación de la documentación técnica](#apartado-068)
+  - [Referencias del apartado 3.4](#apartado-069)
+- [3.5. Integración en el proyecto transversal](#apartado-070)
+  - [3.5.1. Vinculación de la librería](#apartado-071)
+- [Balance y revisión final](#apartado-072)
+  - [Lista de comprobación para la entrega](#apartado-073)
+
+</details>
+
+---
+
+<a id="apartado-001"></a>
+
+## Presentación y alcance
+
+Esta memoria reúne el trabajo documentado del Sprint 03 del módulo Desarrollo de Interfaces del proyecto StockScan. Incluye el modelo de eventos, las pruebas del componente, la documentación técnica, el empaquetado y la vinculación de la biblioteca al proyecto transversal.
+
+Se conserva la numeración de las tareas para facilitar su relación con el tablero de seguimiento. Las evidencias visuales permanecen junto a la explicación que justifican y las referencias se mantienen al final de su bloque.
+
+**Criterio de lectura:** los procedimientos indican qué debe hacerse; los resultados registrados describen ejecuciones recogidas en el material aportado. Los puntos pendientes no se consideran verificados.
+
+<a id="apartado-002"></a>
+
+## Entorno y organización del trabajo
+
+| Elemento | Descripción |
+|---|---|
+| Proyecto | StockScan SGA · Aplicación de escritorio StockScanE |
+| Módulo | Desarrollo de Interfaces (DII) |
+| Lenguaje e interfaz | Java y Swing |
+| Versión de referencia | JDK 21 |
+| Entorno de desarrollo | Apache NetBeans |
+| Construcción de la aplicación | Apache Ant |
+| Pruebas documentadas | JUnit 5 y Maven Surefire; utilidades gráficas según el alcance de la prueba |
+| Seguimiento | Issues, ramas y cambios del equipo en GitHub |
+
+<a id="apartado-003"></a>
+
+## 3.1. Arquitectura de la clase, encapsulación y propiedades por defecto
+
+**Pendiente de incorporar a esta recopilación.** El archivo aportado no contiene el desarrollo de este bloque. Se reserva su posición para integrar la aportación del equipo sin alterar la numeración de los apartados siguientes.
+
+<a id="apartado-004"></a>
 
 ## 3.2. Implementación del modelo de eventos y respuestas
 
-### Índice del apartado 3.2
-
-- [3.2.1. Captura de eventos de bajo nivel](#321-captura-de-eventos-de-bajo-nivel)
-  - [3.2.1.1. Objetivo e investigación](#3211-objetivo-e-investigación)
-  - [3.2.1.2. Registro y control de eventos](#3212-registro-y-control-de-eventos)
-  - [3.2.1.3. Catálogo de interacciones por vista](#3213-catálogo-de-interacciones-por-vista)
-  - [3.2.1.4. Evidencias y revisión](#3214-evidencias-y-revisión)
-- [3.2.2. Mecanismo de notificación propio](#322-mecanismo-de-notificación-propio)
-  - [3.2.2.1. Elección del contrato](#3221-elección-del-contrato)
-  - [3.2.2.2. Implementación](#3222-implementación)
-  - [3.2.2.3. Pruebas del mecanismo](#3223-pruebas-del-mecanismo)
-  - [3.2.2.4. Evidencias y documentación Javadoc](#3224-evidencias-y-documentación-javadoc)
-- [3.2.3. Disparo y feedback visual](#323-disparo-y-feedback-visual)
-  - [3.2.3.1. Objetivo y mecanismo elegido](#3231-objetivo-y-mecanismo-elegido)
-  - [3.2.3.2. Estados visuales](#3232-estados-visuales)
-  - [3.2.3.3. Emisión y recepción de notificaciones](#3233-emisión-y-recepción-de-notificaciones)
-  - [3.2.3.4. Integración en las pantallas](#3234-integración-en-las-pantallas)
-  - [3.2.3.5. Accesibilidad básica](#3235-accesibilidad-básica)
-  - [3.2.3.6. Evidencias visuales](#3236-evidencias-visuales)
-  - [3.2.3.7. Plan de verificación](#3237-plan-de-verificación)
-- [Estado de revisión del apartado 3.2](#estado-de-revisión-del-apartado-32)
-- [Referencias del apartado 3.2](#referencias-del-apartado-32)
-- [3.4 Documentación de la API técnica y empaquetado del artefacto](#34-documentación-de-la-api-técnica-y-empaquetado-del-artefacto)
-  - [3.4.1 Documentación en código con JavaDoc](#341-documentación-en-código-con-javadoc)
-  - [3.4.2 Compilación del artefacto reutilizable](#342-compilación-del-artefacto-reutilizable)
-  - [3.4.3 Generación de la documentación técnica](#343-generación-de-la-documentación-técnica)
-- [3.5.1 Vinculación de la librería](#351-vinculación-de-la-librería)
-
+<a id="apartado-005"></a>
 
 ### 3.2.1. Captura de eventos de bajo nivel
+
+<a id="apartado-006"></a>
 
 #### 3.2.1.1. Objetivo e investigación
 
@@ -49,6 +193,8 @@ Se consideran tres grupos de eventos:
 
 Las clases y sus métodos están documentados en la API de Java SE 21 [2]–[4].
 
+<a id="apartado-007"></a>
+
 #### 3.2.1.2. Registro y control de eventos
 
 En el trabajo de captura de eventos se describe un método privado `configurarEventos()`, llamado después de `initComponents()`, para separar el registro de escuchadores del código generado por NetBeans.
@@ -63,6 +209,8 @@ Estos controles corresponden a la implementación manual descrita para este apar
 En la integración posterior del feedback sobre los botones, descrita en el apartado **3.2.3**, se utiliza `ButtonModel` y `ActionListener`. No deben registrarse ambos mecanismos para ejecutar la misma acción, porque podrían producir notificaciones duplicadas.
 
 Los escuchadores deben ejecutar tareas breves para no bloquear la respuesta de la interfaz [1].
+
+<a id="apartado-008"></a>
 
 #### 3.2.1.3. Catálogo de interacciones por vista
 
@@ -83,6 +231,8 @@ La siguiente tabla recoge las interacciones descritas en el trabajo de captura d
 
 La detección de una interacción no implica por sí sola que exista una operación de negocio completa. Por ejemplo, activar un botón de pedido no demuestra que se haya registrado un pedido en la base de datos.
 
+<a id="apartado-009"></a>
+
 #### 3.2.1.4. Evidencias y revisión
 
 Las evidencias aportadas muestran ejemplos de interacción con controles y seguimiento del ratón.
@@ -99,7 +249,11 @@ La creación y manipulación de la interfaz debe realizarse en el hilo de evento
 
 Estas evidencias no acreditan por sí solas el funcionamiento de todas las interacciones del catálogo. La revisión final debe comprobar cada vista y detectar posibles interferencias entre escuchadores.
 
+<a id="apartado-010"></a>
+
 ### 3.2.2. Mecanismo de notificación propio
+
+<a id="apartado-011"></a>
 
 #### 3.2.2.1. Elección del contrato
 
@@ -113,6 +267,8 @@ Se analizaron dos alternativas para comunicar las acciones del componente a otra
 Se eligió un evento propio para representar explícitamente los datos del proyecto mediante los campos `codigo` y `mensaje`, evitando depender de la interpretación de una única cadena de comando.
 
 El contrato se compone de `StockScanEvent` y `StockScanListener`. Permite que un controlador reciba la notificación sin que el componente necesite conocer su implementación concreta.
+
+<a id="apartado-012"></a>
 
 #### 3.2.2.2. Implementación
 
@@ -136,6 +292,8 @@ Si la lista está vacía, el método de notificación termina sin realizar entre
 
 La colección se basa en `ArrayList` [9]. La prevención de duplicados se realiza en el método de registro del componente; no es una característica automática de `ArrayList`.
 
+<a id="apartado-013"></a>
+
 #### 3.2.2.3. Pruebas del mecanismo
 
 El registro de pruebas aportado para `PruebaNotificacion.java`, situada en `Test Packages`, recoge los siguientes resultados:
@@ -150,6 +308,8 @@ El registro de pruebas aportado para `PruebaNotificacion.java`, situada en `Test
 Estos resultados corresponden a la ejecución documentada. Las pruebas deben repetirse si cambia la implementación.
 
 La ausencia de mensajes en consola demuestra ausencia de recepción observable, pero no implica necesariamente que no se haya construido un objeto evento.
+
+<a id="apartado-014"></a>
 
 #### 3.2.2.4. Evidencias y documentación Javadoc
 
@@ -199,7 +359,11 @@ Las capturas aportadas muestran la documentación HTML generada.
   <img width="907" alt="Javadoc: métodos de ComponenteStockScan" src="https://github.com/user-attachments/assets/6cd275f0-52bd-4d17-926f-5a5864e83a38" />
 </div>
 
+<a id="apartado-015"></a>
+
 ### 3.2.3. Disparo y feedback visual
+
+<a id="apartado-016"></a>
 
 #### 3.2.3.1. Objetivo y mecanismo elegido
 
@@ -217,6 +381,8 @@ Se utiliza `ButtonModel` para consultar:
 | `isArmed()` | Si está preparado para completar la activación. |
 
 El modelo distingue entre mantener el botón pulsado y estar preparado para completar la activación. Esta diferencia permite cancelar una pulsación cuando se libera fuera del botón [10].
+
+<a id="apartado-017"></a>
 
 #### 3.2.3.2. Estados visuales
 
@@ -236,6 +402,8 @@ Un `ChangeListener` actualiza la apariencia cuando cambia el modelo. El estado c
 Después se actualizan los colores y se solicita el repintado mediante `repaint()`. `JComponent` proporciona las propiedades de cliente y el mecanismo de solicitud de repintado [11].
 
 En los filtros se diferencia entre selección persistente e interacción temporal. Al salir el ratón, el filtro seleccionado recupera su color base activo.
+
+<a id="apartado-018"></a>
 
 #### 3.2.3.3. Emisión y recepción de notificaciones
 
@@ -269,6 +437,8 @@ El contador pertenece a cada instancia del controlador.
 
 El mensaje demuestra la recepción de una notificación, pero no confirma una operación de negocio ni un guardado en la base de datos.
 
+<a id="apartado-019"></a>
+
 #### 3.2.3.4. Integración en las pantallas
 
 El comportamiento se registra desde `configurarEfectosVisuales()`, después de `initComponents()`, en:
@@ -294,6 +464,8 @@ En Agenda, Dashboard, Equipo y Stock, la selección se modifica mediante `Action
 
 Este apartado documenta el feedback de los botones existentes. No corresponde a la incorporación de una nueva franja visual de la tarea #75.
 
+<a id="apartado-020"></a>
+
 #### 3.2.3.5. Accesibilidad básica
 
 Los botones se configuran para poder recibir el foco y muestran un borde naranja cuando lo tienen.
@@ -303,6 +475,8 @@ Un escuchador de foco actualiza la apariencia al ganarlo o perderlo.
 Se conservan las asociaciones de teclado de `JButton`, gestionadas por Swing mediante `InputMap` y `ActionMap` [12].
 
 La navegación mediante Tab y la activación mediante Espacio deben comprobarse en ejecución. Su comportamiento depende también de las asociaciones establecidas por la apariencia gráfica utilizada.
+
+<a id="apartado-021"></a>
 
 #### 3.2.3.6. Evidencias visuales
 
@@ -340,6 +514,8 @@ Por sí solas no confirman las teclas utilizadas ni demuestran con certeza la ca
 
 Estas comprobaciones se completarán mediante el siguiente plan de verificación.
 
+<a id="apartado-022"></a>
+
 #### 3.2.3.7. Plan de verificación
 
 Los resultados locales se completarán después de ejecutar y comprobar cada prueba.
@@ -358,6 +534,8 @@ Los resultados locales se completarán después de ejecutar y comprobar cada pru
 | FB-10 | Revisar la salida de NetBeans. | El controlador recibe el código y el mensaje correctos. | Pendiente |
 | FB-11 | Repetir en las pantallas integradas. | No aparecen interferencias ni notificaciones duplicadas. | Pendiente |
 
+<a id="apartado-023"></a>
+
 ### Estado de revisión del apartado 3.2
 
 | Apartado | Situación |
@@ -370,6 +548,8 @@ Los resultados locales se completarán después de ejecutar y comprobar cada pru
 Los resultados pendientes deben actualizarse después de ejecutar las comprobaciones.
 
 Las fuentes técnicas justifican los mecanismos utilizados, pero no sustituyen las pruebas del proyecto.
+
+<a id="apartado-024"></a>
 
 ### Referencias del apartado 3.2
 
@@ -401,55 +581,17 @@ La numeración de las siguientes referencias corresponde únicamente al apartado
 
 Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias de la API corresponden a Java SE 21.
 
+<a id="apartado-025"></a>
+
 ## 3.3. Pruebas automatizadas y validación de estados aislados
 
-### Índice del apartado 3.3
-
-- [3.3.1. Aislamiento del componente](#331-aislamiento-del-componente)
-  - [3.3.1.1. Comprobar la configuración del proyecto y la versión de Java utilizada](#3311-comprobar-la-configuración-del-proyecto-y-la-versión-de-java-utilizada)
-  - [3.3.1.2. Añadir JUnit 5 como dependencia de pruebas](#3312-añadir-junit-5-como-dependencia-de-pruebas)
-  - [3.3.1.3. Crear la clase de test en el paquete de pruebas correspondiente](#3313-crear-la-clase-de-test-en-el-paquete-de-pruebas-correspondiente)
-  - [3.3.1.4. Preparar la creación del componente sin depender de la ventana principal](#3314-preparar-la-creación-del-componente-sin-depender-de-la-ventana-principal)
-  - [3.3.1.5. Ejecutar las operaciones de UI en el Event Dispatch Thread](#3315-ejecutar-las-operaciones-de-ui-en-el-event-dispatch-thread)
-  - [3.3.1.6. Añadir utilidades gráficas solo si aportan valor](#3316-añadir-utilidades-gráficas-solo-si-aportan-valor)
-  - [3.3.1.7. Ejecutar un test mínimo para verificar que la infraestructura funciona](#3317-ejecutar-un-test-mínimo-para-verificar-que-la-infraestructura-funciona)
-  - [3.3.1.8. Documentar la configuración y cómo ejecutar las pruebas](#3318-documentar-la-configuración-y-cómo-ejecutar-las-pruebas)
-  - [3.3.1.9. Documentación](#3319-documentación)
-  - [3.3.1.10. Riesgos y problemas previsibles en las pruebas del componente Swing](#33110-riesgos-y-problemas-previsibles-en-las-pruebas-del-componente-swing)
-  - [3.3.1.11. Decisión de herramienta de construcción: Maven en lugar de Gradle](#33111-decisión-de-herramienta-de-construcción-maven-en-lugar-de-gradle)
-  - [3.3.1.12. Migración parcial a Maven solo para las pruebas](#33112-migración-parcial-a-maven-solo-para-las-pruebas)
-  - [3.3.1.13. Glosario de términos técnicos](#33113-glosario-de-términos-técnicos)
-- [3.3.2. Aserciones sobre el estado interno](#332-aserciones-sobre-el-estado-interno)
-  - [3.3.2.1. Verificar los valores por defecto tras usar el constructor sin argumentos](#3321-verificar-los-valores-por-defecto-tras-usar-el-constructor-sin-argumentos)
-  - [3.3.2.2. Comprobar que cada setter actualiza el valor que devuelve su getter](#3322-comprobar-que-cada-setter-actualiza-el-valor-que-devuelve-su-getter)
-  - [3.3.2.3. Verificar que los tamaños negativos se rechazan o se normalizan](#3323-verificar-que-los-tamaños-negativos-se-rechazan-o-se-normalizan)
-  - [3.3.2.4. Comprobar el tratamiento de colores/textos nulos](#3324-comprobar-el-tratamiento-de-colores-textos-nulos)
-  - [3.3.2.5. Comprobar que los cambios visuales solicitan actualización](#3325-comprobar-que-los-cambios-visuales-solicitan-actualización)
-  - [3.3.2.6. Añadir casos límite y nombres descriptivos a los tests](#3326-añadir-casos-límite-y-nombres-descriptivos-a-los-tests)
-  - [3.3.2.7. Ejecutar la suite y corregir fallos junto al responsable del código](#3327-ejecutar-la-suite-y-corregir-fallos-junto-al-responsable-del-código)
-  - [3.3.2.8. Documentar los casos cubiertos y el resultado](#3328-documentar-los-casos-cubiertos-y-el-resultado)
-  - [3.3.2.9. Documentación](#3329-documentación)
-  - [3.3.2.10. Revisión de la tarea](#33210-revisión-de-la-tarea)
-  - [3.3.2.11. Riesgos y problemas previsibles](#33211-riesgos-y-problemas-previsibles)
-  - [3.3.2.12. Glosario de términos técnicos](#33212-glosario-de-términos-técnicos)
-- [3.3.3. Prueba de simulación de interacción](#333-prueba-de-simulación-de-interacción)
-  - [3.3.3.1. Simular un clic/interacción mediante la herramienta disponible](#3331-simular-un-clic-interacción-mediante-la-herramienta-disponible)
-  - [3.3.3.2. Verificar que se emite exactamente la notificación esperada](#3332-verificar-que-se-emite-exactamente-la-notificación-esperada)
-  - [3.3.3.3. Verificar que no se notifica a un listener después de desregistrarlo](#3333-verificar-que-no-se-notifica-a-un-listener-después-de-desregistrarlo)
-  - [3.3.3.4. Comprobar el cambio de estado observable tras la interacción](#3334-comprobar-el-cambio-de-estado-observable-tras-la-interacción)
-  - [3.3.3.5. Ejecutar las pruebas en conjunto con el resto de la suite](#3335-ejecutar-las-pruebas-en-conjunto-con-el-resto-de-la-suite)
-  - [3.3.3.6. Registrar incidencias y repetir la prueba tras las correcciones](#3336-registrar-incidencias-y-repetir-la-prueba-tras-las-correcciones)
-  - [3.3.3.7. Documentar el procedimiento y los resultados](#3337-documentar-el-procedimiento-y-los-resultados)
-  - [3.3.3.8. Documentación](#3338-documentación)
-  - [3.3.3.9. Implementación y resultados de las pruebas de simulación](#3339-implementación-y-resultados-de-las-pruebas-de-simulación)
-- [Estado de revisión del apartado 3.3](#estado-de-revisión-del-apartado-33)
-- [Referencias del apartado 3.3](#referencias-del-apartado-33)
-
----
-
----
+<a id="apartado-026"></a>
 
 ### 3.3.1. Aislamiento del componente
+
+Los pasos siguientes describen el procedimiento de preparación. Los resultados de ejecución aportados se recogen en el apartado 3.3.3.9.
+
+<a id="apartado-027"></a>
 
 #### 3.3.1.1. Comprobar la configuración del proyecto y la versión de Java utilizada
 **Objetivo:** confirmar que el proyecto puede ejecutar pruebas unitarias con JUnit 5 antes de añadir nada.
@@ -459,6 +601,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Confirmar que la interfaz es Swing, de modo que la utilidad gráfica sea AssertJ Swing [4].
 - Comprobar que existe la carpeta de pruebas "src/test/" separada del código de producción "src/main/" [5].
 **Resultado esperado:** versión de Java y gestor de dependencias identificados y anotados en el issue.
+
+<a id="apartado-028"></a>
 
 #### 3.3.1.2. Añadir JUnit 5 como dependencia de pruebas
 **Objetivo:** dotar al proyecto de las librerías necesarias para escribir y ejecutar las pruebas.
@@ -484,6 +628,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 
 **Recomendación: JUnit 5**, por tres motivos: el propio issue #68 pide utilizar JUnit 5, NetBeans lo soporta de forma nativa en proyectos Maven [13], [15], [3], y aporta herramientas clave usadas en las tareas (**assertAll**, **assertThrows**, `@DisplayName` y `@Nested`) [2], [16].
 
+<a id="apartado-029"></a>
+
 #### 3.3.1.3. Crear la clase de test en el paquete de pruebas correspondiente
 **Objetivo:** tener una clase de pruebas unitarias dedicada al componente, separada de la ventana principal.
 **Qué hay que hacer:**
@@ -491,6 +637,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Importar las anotaciones `@Test`, `@BeforeEach` y `@AfterEach` y las aserciones de "org.junit.jupiter.api" [2].
 - Limitar el alcance de la clase al componente: no debe depender de la ventana principal [20].
 **Resultado esperado:** clase de test creada y compilando.
+
+<a id="apartado-030"></a>
 
 #### 3.3.1.4. Preparar la creación del componente sin depender de la ventana principal
 **Objetivo:** poder instanciar el componente de forma aislada en cada prueba.
@@ -502,6 +650,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Garantizar que cada test parte de una instancia nueva [2].
 **Resultado esperado:** el componente se crea en las pruebas sin levantar la aplicación completa.
 
+<a id="apartado-031"></a>
+
 #### 3.3.1.5. Ejecutar las operaciones de UI en el Event Dispatch Thread
 **Objetivo:** evitar fallos intermitentes y accesos incorrectos a componentes Swing desde hilos distintos al de la interfaz [23].
 **Qué hay que hacer:**
@@ -509,6 +659,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Registrar **FailOnThreadViolationRepaintManager.install()** en un método `@BeforeAll` para fallar si hay accesos fuera del EDT [24], [25].
 - Aplicar esta regla solo a las operaciones que tocan la interfaz [23].
 **Resultado esperado:** todas las operaciones de UI de las pruebas se ejecutan en el EDT.
+
+<a id="apartado-032"></a>
 
 #### 3.3.1.6. Añadir utilidades gráficas solo si aportan valor
 **Objetivo:** mantener la infraestructura de pruebas lo más simple posible.
@@ -518,6 +670,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Dejar anotada en el issue la decisión y su motivo.
 **Resultado esperado:** decisión justificada sobre las utilidades gráficas.
 
+<a id="apartado-033"></a>
+
 #### 3.3.1.7. Ejecutar un test mínimo para verificar que la infraestructura funciona
 **Objetivo:** comprobar que todo lo preparado funciona antes de escribir pruebas completas.
 **Qué hay que hacer:**
@@ -525,6 +679,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Ejecutarlo desde la línea de comandos: **mvn test** en Maven [9].
 - Comprobar en el informe de resultados ("target/surefire-reports") que el test ha pasado [9].
 **Resultado esperado:** un test que se ejecuta y pasa, confirmando la configuración.
+
+<a id="apartado-034"></a>
 
 #### 3.3.1.8. Documentar la configuración y cómo ejecutar las pruebas
 **Objetivo:** que cualquier miembro del equipo pueda ejecutar las pruebas sin ayuda.
@@ -534,6 +690,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Explicar dónde se encuentran los informes de resultados [9].
 **Resultado esperado:** sección de pruebas en la documentación del proyecto.
 
+<a id="apartado-035"></a>
+
 #### 3.3.1.9. Documentación
 **Objetivo:** dejar constancia de lo que prueba la clase de test y cómo está montado el aislamiento.
 **Qué hay que hacer:**
@@ -541,6 +699,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Comentar brevemente la preparación en `@BeforeEach` y `@AfterEach` [2].
 - Enlazar el issue #68 desde la documentación.
 **Resultado esperado:** código de pruebas y documentación coherentes.
+
+<a id="apartado-036"></a>
 
 #### 3.3.1.10. Riesgos y problemas previsibles en las pruebas del componente Swing
 - **Error de entorno sin pantalla (HeadlessException):** ocurre en equipos sin entorno gráfico. Se previene ejecutando las pruebas en un equipo con pantalla o preparando un entorno gráfico virtual (Xvfb) [26], [27], [28].
@@ -550,14 +710,18 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - **Componentes difíciles de localizar:** si no tienen nombre, la búsqueda falla. Se previene asignando **setName(...)** a los componentes [22], [33].
 - **Pruebas que interfieren con el equipo:** AssertJ Swing simula gestos reales a nivel del sistema. Se previene no usando el ratón ni el teclado durante las pruebas gráficas [28].
 
+<a id="apartado-037"></a>
+
 #### 3.3.1.11. Decisión de herramienta de construcción: Maven en lugar de Gradle
-**Decisión:** el proyecto usa Maven como herramienta de construcción y gestor de dependencias.
+**Decisión para las pruebas:** incorporar Maven para gestionar y ejecutar las pruebas, manteniendo Ant como sistema de construcción de la aplicación.
 **Motivos:**
 1.  **Integración nativa con NetBeans:** NetBeans delega en Surefire para ejecutar los tests en proyectos Maven [15], [14].
 2.  **JUnit 5 con menos configuración:** Surefire toma el motor de pruebas de las dependencias normales, sin necesidad de configurar `useJUnitPlatform()` explícitamente [3].
 3.  **Estructura convencional:** Maven sigue "convención sobre configuración", es más sencillo de aprender y tiene más documentación [5], [37], [38].
 4.  **Proyecto de tamaño reducido:** La diferencia de velocidad con Gradle es despreciable en proyectos de un solo módulo [39], [40].
 **Qué asumimos:** Gradle puede ser más rápido en proyectos grandes [40], [41], y la configuración XML es más verbosa que Groovy/Kotlin [38]. **Migraremos temporalmente el proyecto a Maven únicamente para la etapa de testeo, pero el proyecto está hecho con Ant.**
+
+<a id="apartado-038"></a>
 
 #### 3.3.1.12. Migración parcial a Maven solo para las pruebas
 **Objetivo:** añadir Maven al proyecto únicamente para compilar y ejecutar las pruebas con JUnit 5, sin cambiar cómo se compila con Ant.
@@ -573,6 +737,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 8.  Verificar con **mvn clean test** y **ant clean** [9].
 **Qué no se hace:** No se mueven archivos a "src/main/" ni se elimina "build.xml" [44]. No se usa Maven para empaquetar [44].
 
+<a id="apartado-039"></a>
+
 #### 3.3.1.13. Glosario de términos técnicos
 - **Prueba unitaria:** prueba automática que comprueba una parte pequeña del código de forma aislada [2].
 - **JUnit 5 (Jupiter):** framework de Java para escribir y ejecutar pruebas [2].
@@ -587,7 +753,11 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 
 ---
 
+<a id="apartado-040"></a>
+
 ### 3.3.2. Aserciones sobre el estado interno
+
+<a id="apartado-041"></a>
 
 #### 3.3.2.1. Verificar los valores por defecto tras usar el constructor sin argumentos
 **Objetivo:** confirmar que el componente nace con un estado inicial correcto y predecible.
@@ -597,6 +767,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Evitar acceder a atributos privados o a detalles internos de implementación [1], [2].
 **Resultado esperado:** una prueba por cada propiedad con valor por defecto, todas pasando.
 
+<a id="apartado-042"></a>
+
 #### 3.3.2.2. Comprobar que cada setter actualiza el valor que devuelve su getter
 **Objetivo:** asegurar que lo que se asigna con un setter es lo que después se lee con su getter.
 **Qué hay que hacer:**
@@ -604,6 +776,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Asignar un valor distinto del valor por defecto y comprobar que el getter devuelve exactamente ese valor.
 - Agrupar las comprobaciones con **assertAll** para ver todos los fallos a la vez [4].
 **Resultado esperado:** todos los pares setter/getter cubiertos y comportándose de forma coherente.
+
+<a id="apartado-043"></a>
 
 #### 3.3.2.3. Verificar que los tamaños negativos se rechazan o se normalizan
 **Objetivo:** dejar probado cómo reacciona el componente ante tamaños no válidos.
@@ -614,6 +788,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Si se normaliza, comprobar que el getter devuelve el valor normalizado.
 **Resultado esperado:** pruebas que reflejan el contrato de tamaños negativos acordado.
 
+<a id="apartado-044"></a>
+
 #### 3.3.2.4. Comprobar el tratamiento de colores/textos nulos
 **Objetivo:** dejar probado qué ocurre cuando se asigna **null** a un color o a un texto.
 **Qué hay que hacer:**
@@ -622,6 +798,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Si se rechaza con excepción, comprobarla con **assertThrows** [4].
 - Probar también el texto vacío (**""**) para distinguirlo de **null**.
 **Resultado esperado:** reglas de nulidad acordadas y verificadas.
+
+<a id="apartado-045"></a>
 
 #### 3.3.2.5. Comprobar que los cambios visuales solicitan actualización
 **Objetivo:** asegurar que, al cambiar una propiedad que afecta a la apariencia, el componente pide repintarse, sin necesidad de mostrar una ventana.
@@ -632,6 +810,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Ejecutar las operaciones de interfaz dentro del Event Dispatch Thread [5], [6].
 **Resultado esperado:** pruebas que verifican la solicitud de actualización visual sin depender de la ventana principal.
 
+<a id="apartado-046"></a>
+
 #### 3.3.2.6. Añadir casos límite y nombres descriptivos a los tests
 **Objetivo:** ampliar la cobertura a los valores extremos y hacer que los tests se entiendan sin leer su código.
 **Qué hay que hacer:**
@@ -640,6 +820,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Renombrar los tests con una convención común o usar `@DisplayName` [3].
 - Agrupar las pruebas por funcionalidad con `@Nested` [3].
 **Resultado esperado:** pruebas con casos límite cubiertos y nombres que explican qué comprueban.
+
+<a id="apartado-047"></a>
 
 #### 3.3.2.7. Ejecutar la suite y corregir fallos junto al responsable del código
 **Objetivo:** comprobar que todas las pruebas pasan y resolver los fallos con quien conoce el código.
@@ -650,6 +832,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Lanzar la suite más de una vez para confirmar que ninguna prueba depende del orden de ejecución [4].
 **Resultado esperado:** suite completa en verde y lista de los fallos corregidos.
 
+<a id="apartado-048"></a>
+
 #### 3.3.2.8. Documentar los casos cubiertos y el resultado
 **Objetivo:** dejar constancia de qué se ha probado, con qué resultado y qué queda sin cubrir.
 **Qué hay que hacer:**
@@ -658,6 +842,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Si se genera informe de cobertura con JaCoCo, adjuntarlo y aclarar que mide qué líneas se ejecutan, no si las pruebas validan algo útil [7], [8].
 **Resultado esperado:** documento con los casos cubiertos, sus resultados y las limitaciones conocidas.
 
+<a id="apartado-049"></a>
+
 #### 3.3.2.9. Documentación
 **Objetivo:** que cualquier miembro del equipo entienda qué comprueba la suite y cómo ejecutarla.
 **Qué hay que hacer:**
@@ -665,6 +851,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Comentar brevemente los tests menos evidentes.
 - Actualizar la sección "Pruebas" del README.
 **Resultado esperado:** documentación coherente con el código.
+
+<a id="apartado-050"></a>
 
 #### 3.3.2.10. Revisión de la tarea
 **Objetivo:** verificar que se cumple todo lo pedido antes de cerrar el issue.
@@ -675,6 +863,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Pedir revisión a otro miembro del equipo mediante pull request.
 **Resultado esperado:** tareas verificadas, suite en verde y el issue listo para cerrarse.
 
+<a id="apartado-051"></a>
+
 #### 3.3.2.11. Riesgos y problemas previsibles
 - **Pruebas atadas a detalles privados:** cualquier refactorización rompe las pruebas. Se previene probando solo a través de constructores, getters y setters públicos [1], [2].
 - **Pruebas de relleno que pasan sin validar nada:** la cobertura parece alta pero no protege de errores. Se previene asignando valores distintos de los valores por defecto y comprobando siempre un resultado concreto [8], [9], [10].
@@ -684,6 +874,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - **Estado compartido entre pruebas:** los tests empiezan a depender del orden de ejecución. Se previene creando un componente nuevo en `@BeforeEach` y evitando campos estáticos mutables [4].
 - **Corregir los tests en lugar del problema real:** es tentador modificar la prueba para que pase. Se previene decidiendo con el responsable del código si el fallo está en la prueba o en el código.
 - **Tests con nombres poco claros:** un fallo en el informe no dice qué regla se ha roto. Se previene acordando una convención de nombres única y agrupando con `@Nested` [3].
+
+<a id="apartado-052"></a>
 
 #### 3.3.2.12. Glosario de términos técnicos
 - **API pública:** conjunto de constructores y métodos públicos del componente [1].
@@ -699,7 +891,11 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 
 ---
 
+<a id="apartado-053"></a>
+
 ### 3.3.3. Prueba de simulación de interacción
+
+<a id="apartado-054"></a>
 
 #### 3.3.3.1. Simular un clic/interacción mediante la herramienta disponible  
 **Objetivo:** provocar en la prueba la acción del usuario sin intervención manual.
@@ -710,6 +906,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - La opción elegida y su motivo se anotan en el issue.
 **Resultado esperado:** la interacción se simula de forma repetible en la prueba.
 
+<a id="apartado-055"></a>
+
 #### 3.3.3.2. Verificar que se emite exactamente la notificación esperada
 **Objetivo:** comprobar que, tras la interacción, el listener ha recibido una única notificación y con el contenido correcto.
 **Qué se hace:**
@@ -719,6 +917,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Si se espera una lista de eventos, compararla con **assertIterableEquals** [8].
 **Resultado esperado:** el test falla si no se notifica, si se notifica más de una vez o si el contenido no es el previsto.
 
+<a id="apartado-056"></a>
+
 #### 3.3.3.3. Verificar que no se notifica a un listener después de desregistrarlo
 **Objetivo:** comprobar que un listener desregistrado deja de recibir notificaciones.
 **Qué se hace:**
@@ -727,6 +927,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Opcionalmente, comprobar que ya no figura entre los listeners del componente [4].
 **Resultado esperado:** tras desregistrarlo, el listener no recibe ninguna notificación nueva.
 
+<a id="apartado-057"></a>
+
 #### 3.3.3.4. Comprobar el cambio de estado observable tras la interacción
 **Objetivo:** confirmar que, además de notificar, el componente actualiza su estado observable.
 **Qué se hace:**
@@ -734,6 +936,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Leer el estado dentro del Event Dispatch Thread cuando se acceda directamente al componente [7].
 - Agrupar con **assertAll** las comprobaciones de varios elementos [8].
 **Resultado esperado:** el estado observable coincide con el previsto después de la interacción.
+
+<a id="apartado-058"></a>
 
 #### 3.3.3.5. Ejecutar las pruebas en conjunto con el resto de la suite
 **Objetivo:** comprobar que las nuevas pruebas funcionan junto con las demás y no se afectan entre sí.
@@ -744,6 +948,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Revisar los informes en **target/surefire-reports** [9].
 **Resultado esperado:** las pruebas pasan tanto solas como junto al resto de la suite.
 
+<a id="apartado-059"></a>
+
 #### 3.3.3.6. Registrar incidencias y repetir la prueba tras las correcciones
 **Objetivo:** dejar constancia de los fallos encontrados y comprobar que quedan corregidos.
 **Qué se hace:**
@@ -751,6 +957,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Tras corregir, repetir la prueba con **mvn test** y comprobar el informe de resultados [9].
 - Anotar en el issue qué falló, qué se corrigió y el resultado de la repetición.
 **Resultado esperado:** incidencias registradas y pruebas repetidas tras cada corrección.
+
+<a id="apartado-060"></a>
 
 #### 3.3.3.7. Documentar el procedimiento y los resultados
 **Objetivo:** que cualquier miembro del equipo pueda repetir las pruebas y ver qué resultados dieron.
@@ -766,6 +974,8 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 | Cambio de estado observable | *Comprobado* |
 | Ejecución en conjunto con la suite | *Comprobado* |
 
+<a id="apartado-061"></a>
+
 #### 3.3.3.8. Documentación
 **Objetivo:** dejar el código de pruebas comprensible para quien no ha participado en la tarea.
 **Qué se hace:**
@@ -774,11 +984,13 @@ Los tutoriales de Oracle citados están redactados para JDK 8. Las referencias d
 - Enlazar este issue desde la documentación [12].
 **Resultado esperado:** código de pruebas y documentación coherentes entre sí.
 
+<a id="apartado-062"></a>
+
 #### 3.3.3.9. Implementación y resultados de las pruebas de simulación
 Se ha completado con éxito la fase de pruebas unitarias para el componente **ComponenteStockScan**. El objetivo principal era validar el patrón Observer implementado, asegurando que la comunicación entre el componente y sus suscriptores funciona de manera fiable y sin efectos secundarios no deseados.
 
 **Enfoque de las pruebas realizadas:**
-Para garantizar la calidad del componente, se ha diseñado una suite de pruebas automatizadas con **JUnit 5** (integrada en Java 21). Dado que el componente no cuenta con un elemento gráfico nativo para simular clics, se optó por invocar directamente el método de acción público **notificarObservadores**, lo que permite un control total y repetible sobre el escenario de prueba.
+Para garantizar la calidad del componente, se ha diseñado una suite de pruebas automatizadas con **JUnit 5** (integrada en Java 21). Dado que el componente no cuenta con un elemento gráfico nativo para simular clics, se optó por invocar el método **notificarObservadores** desde la prueba con el acceso permitido por la clase y el paquete, lo que permite un control total y repetible sobre el escenario de prueba.
 
 Los escenarios clave que han sido validados son los siguientes:
 - **Verificación de la notificación:** Se comprobó que, al simular la interacción, el listener registrado recibe exactamente un evento. Además, se validó que el evento transporta el código correcto, el mensaje esperado y que el objeto origen es, efectivamente, la instancia del componente.
@@ -796,6 +1008,7 @@ La ejecución de las pruebas se ha gestionado a través de **Maven**, cumpliendo
 **Resultados obtenidos (Salida de Maven):**
 A continuación se muestra la salida exacta de la consola al ejecutar las pruebas mediante Maven, confirmando el éxito total de la suite:
 
+```text
 [INFO] -------------------------------------------------------
 [INFO] T E S T S
 [INFO] -------------------------------------------------------
@@ -811,12 +1024,15 @@ A continuación se muestra la salida exacta de la consola al ejecutar las prueba
 [INFO] ------------------------------------------------------------------------
 [INFO] Total time: 2.345 s
 [INFO] ------------------------------------------------------------------------
+```
 
 
-**Conclusión:**
-No se han detectado incidencias ni comportamientos inesperados durante la ejecución. El componente **ComponenteStockScan** demuestra ser robusto y cumple estrictamente con los requisitos de notificación y actualización de estado definidos en la issue. Se da por finalizada y validada la tarea de simulación de interacción.
+**Conclusión del registro aportado:**
+La salida documentada recoge tres pruebas ejecutadas sin fallos ni errores. Este resultado respalda los casos incluidos en esa ejecución; no acredita por sí solo todos los estados gráficos, la interacción física del ratón ni el conjunto de la aplicación.
 
 ---
+
+<a id="apartado-063"></a>
 
 ### Estado de revisión del apartado 3.3
 
@@ -831,7 +1047,11 @@ Los resultados pendientes deben actualizarse después de ejecutar las comprobaci
 
 Las fuentes técnicas justifican los mecanismos utilizados, pero no sustituyen las pruebas del proyecto.
 
+<a id="apartado-064"></a>
+
 ### Referencias del apartado 3.3
+
+> **Revisión bibliográfica pendiente:** se conserva la bibliografía del documento original. Algunas llamadas numéricas de 3.3.1 y 3.3.2 no coinciden con la entrada correspondiente de esta lista. Deben corregirse antes de la entrega; esta reorganización no equivale a una validación de las fuentes.
 
 La numeración de las siguientes referencias corresponde únicamente al apartado 3.3.
 
@@ -930,11 +1150,15 @@ La numeración de las siguientes referencias corresponde únicamente al apartado
 [47] "JUnit 5 Maven dependency pom.xml example," HowToDoInJava. [Online]. Available: https://howtodoinjava.com/junit-5/junit-5-maven-dependency-pom-xml-example/
 
 
-## 3.4 Documentación de la API técnica y empaquetado del artefacto
+<a id="apartado-065"></a>
+
+## 3.4. Documentación de la API técnica y empaquetado del artefacto
 
 El objetivo de esta actividad fue preparar el componente de escaneo de StockScan para que otro desarrollador pudiera utilizarlo en su propio proyecto Java. El trabajo se dividió en tres partes: explicar en el código cómo se utiliza el componente, generar una biblioteca con las clases necesarias y crear una guía que se pudiera consultar desde el navegador [1].
 
-### 3.4.1 Documentación en código con JavaDoc
+<a id="apartado-066"></a>
+
+### 3.4.1. Documentación en código con JavaDoc
 
 Para preparar esta tarea, realicé el curso *Documentación del código con Javadoc* de OpenWebinars, con una duración de 43 minutos. En él aprendí a escribir comentarios de documentación y a generar una guía a partir del código Java. Al terminar, adjunté el certificado a la actividad del sprint [2]–[4].
 
@@ -958,7 +1182,9 @@ En los métodos de consulta y modificación de propiedades expliqué qué valor 
 
 Por último, revisé los comentarios existentes, completé las explicaciones que faltaban y publiqué los cambios en la rama `main` de StockScan SGA. También se comprobó que JavaDoc podía generar la documentación pública con Java 21 sin emitir avisos [6], [7].
 
-### 3.4.2 Compilación del artefacto reutilizable
+<a id="apartado-067"></a>
+
+### 3.4.2. Compilación del artefacto reutilizable
 
 El objetivo de esta tarea fue entregar el componente de escaneo en un **archivo JAR** que pudiera añadirse como biblioteca a otro proyecto. Un JAR agrupa en un único archivo las clases Java ya compiladas y los recursos que necesitan. Trabajé con Apache NetBeans, el JDK 21 y Apache Ant 1.10.17. Comprobé la versión de Ant mediante `ant -version` [8]–[12].
 
@@ -989,7 +1215,9 @@ jar tf StockScanE/dist/stockscan-componente-1.0.0.jar
 
 Después compilé un programa de prueba en una carpeta independiente utilizando el JAR como única dependencia de StockScan. Registré dos veces el mismo oyente y envié un aviso con el código `ART-02` y el mensaje `Stock actualizado`. La consola mostró una sola notificación. A continuación, retiré el oyente y envié otro aviso. Esta vez no apareció ningún mensaje nuevo. Con esta prueba comprobé que la biblioteca funcionaba fuera del proyecto original y que el registro y la retirada de oyentes se comportaban como indicaba su documentación [12].
 
-### 3.4.3 Generación de la documentación técnica
+<a id="apartado-068"></a>
+
+### 3.4.3. Generación de la documentación técnica
 
 El objetivo de esta tarea fue convertir los comentarios del apartado 3.4.1 en una guía que pudiera abrirse desde el navegador. La herramienta `javadoc`, incluida en el JDK, lee los comentarios del código fuente y genera páginas HTML con la descripción de las clases, los constructores y los métodos [18].
 
@@ -1005,7 +1233,11 @@ ant -f StockScanE/build.xml javadoc-zip
 
 Como resultado, el apartado 3.4 produjo dos archivos complementarios. **`stockscan-componente-1.0.0.jar`** permite incorporar el componente a otro proyecto Java. **`stockscan-javadoc.zip`** contiene la guía para aprender a utilizarlo [17], [22].
 
-### Referencias
+<a id="apartado-069"></a>
+
+### Referencias del apartado 3.4
+
+La numeración de estas referencias corresponde únicamente al apartado 3.4.
 
 [1] StockScan Team, “3.4 Documentación de la API técnica y empaquetado del artefacto,” actividad n.º 59, GitHub, 2026. [En línea]. Disponible en: <https://github.com/stockscan-team/stockscan-dii/issues/59>.
 
@@ -1052,7 +1284,15 @@ Como resultado, el apartado 3.4 produjo dos archivos complementarios. **`stocksc
 [22] StockScan Team, “Documentación JavaDoc de StockScan SGA,” sitio HTML distribuido en `stockscan-javadoc.zip`, 2026. [En línea]. Disponible en: <https://github.com/stockscan-team/stockscan-sga/blob/41764e5/StockScanE/dist/stockscan-javadoc.zip>.
 
 
-### 3.5.1 Vinculación de la librería
+<a id="apartado-070"></a>
+
+## 3.5. Integración en el proyecto transversal
+
+Este bloque recoge la vinculación de la biblioteca al proyecto StockScanE. Los demás subapartados de integración no se incluyen en el texto aportado.
+
+<a id="apartado-071"></a>
+
+### 3.5.1. Vinculación de la librería
 
 Para que el proyecto transversal `StockScanE` pudiera utilizar el componente de escaneo, incorporé el JAR generado en la tarea 3.4.2 siguiendo estos pasos:
 
@@ -1061,3 +1301,31 @@ Para que el proyecto transversal `StockScanE` pudiera utilizar el componente de 
 3. En `build.xml`, excluí de la compilación de la aplicación las cuatro clases e interfaces que ya contiene el JAR. De esta forma, la aplicación utiliza la biblioteca y evita duplicar esas clases.
 
 **Comprobación.** Compilé el proyecto desde cero y ejecuté la prueba de notificaciones. Verifiqué que Java cargaba `ComponenteStockScan`, `StockScanEvent` y `StockScanListener` desde el JAR. El programa recibió una única notificación con el código `ART-02` y el mensaje `Stock actualizado`. [Ver el cambio en GitHub](https://github.com/stockscan-team/stockscan-sga/commit/f0987a69d2bf4c6f2bb7864bd9e0188dda7d793f)
+
+<a id="apartado-072"></a>
+
+## Balance y revisión final
+
+La documentación recoge la conexión entre interacción, notificación y respuesta visual; el procedimiento de pruebas; la preparación del JAR y de Javadoc; y la vinculación de la biblioteca al proyecto transversal.
+
+| Bloque | Contenido disponible | Revisión pendiente |
+|---|---|---|
+| 3.1 | Posición reservada. | Incorporar la documentación del equipo. |
+| 3.2 | Implementación, capturas, grabaciones y pruebas de notificación. | Contrastar el catálogo por pantalla y completar FB-01 a FB-11. |
+| 3.3 | Procedimientos y registro de tres pruebas sin fallos. | Corregir la correspondencia de citas y asociar los resultados a la versión probada. |
+| 3.4 | Documentación de API, JAR, Javadoc y enlaces a entregables. | Comprobar la accesibilidad de los entregables en la revisión de entrega. |
+| 3.5 | Vinculación del JAR documentada. | Incorporar los demás subapartados que correspondan al alcance del sprint. |
+
+<a id="apartado-073"></a>
+
+### Lista de comprobación para la entrega
+
+- [ ] Incorporar el apartado 3.1.
+- [ ] Completar la fecha de cierre acordada por el equipo.
+- [ ] Identificar la versión o commit final al que corresponde la memoria.
+- [ ] Revisar las referencias y su correspondencia con las citas, especialmente en 3.3.
+- [ ] Completar las pruebas pendientes sin sustituir los resultados esperados por resultados obtenidos.
+- [ ] Comprobar que las imágenes y grabaciones se visualizan en GitHub.
+- [ ] Revisar los enlaces al código, JAR y documentación Javadoc.
+- [ ] Incorporar las aportaciones restantes de integración, si forman parte de la entrega.
+- [ ] Realizar la revisión conjunta del equipo antes de cerrar la memoria.
