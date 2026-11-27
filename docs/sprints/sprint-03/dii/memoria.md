@@ -924,3 +924,154 @@ La numeración de las siguientes referencias corresponde únicamente al apartado
 [47] "JUnit 5 Maven dependency pom.xml example," HowToDoInJava. [Online]. Available: https://howtodoinjava.com/junit-5/junit-5-maven-dependency-pom-xml-example/
 
 
+
+## 3.4 Documentación de la API técnica y empaquetado del artefacto
+
+El objetivo de esta actividad fue preparar el componente de escaneo de StockScan para que otro desarrollador pudiera incorporarlo a un proyecto Java y entender cómo utilizarlo. Para conseguirlo, dividí el trabajo en tres partes. Primero documenté en el código cómo funciona el componente. Después generé un archivo JAR con las clases necesarias para reutilizarlo. Por último, convertí los comentarios del código en una guía HTML que se puede abrir en un navegador [1].
+
+### 3.4.1 Documentación en código con JavaDoc
+
+#### Formación y preparación
+
+Para preparar esta tarea, completé el curso *Documentación del código con Javadoc*, de OpenWebinars, con una duración de 43 minutos. Aprendí a escribir comentarios de documentación, a elegir las etiquetas adecuadas y a generar páginas HTML a partir del código fuente. Adjunté el certificado a la actividad del sprint y adapté los ejemplos del curso al entorno del proyecto, Apache NetBeans con Java 21 [2]–[4].
+
+#### Qué documenté
+
+La **API pública** es el conjunto de clases, constructores y métodos que otro programa puede utilizar. En StockScan, la documentación debía permitir responder a tres preguntas: cómo crear el componente, cómo suscribirse a sus avisos y qué información contiene cada notificación [2].
+
+Los comentarios JavaDoc se escriben entre `/**` y `*/`, justo encima de la clase, el constructor o el método que describen. En `ComponenteStockScan` expliqué para qué sirve el panel, cómo se inicializa con el constructor sin argumentos y cómo se registra o se retira un oyente. Un *oyente* es el objeto que quiere recibir una notificación cuando el componente comunica una acción [2], [5].
+
+También documenté la relación entre `StockScanEvent` y `StockScanListener`. `StockScanEvent` representa el aviso y contiene el código del artículo y el mensaje. `StockScanListener` define el método que recibe ese aviso. Por ejemplo, cuando el componente notifica el código `ART-02` y el mensaje `Stock actualizado`, el oyente recibe ambos datos en un mismo evento [2].
+
+En los métodos que consultan propiedades, conocidos como *getters*, expliqué qué valor se obtiene. En los métodos que las modifican, o *setters*, describí los valores admitidos y las validaciones. También documenté las excepciones relevantes. Por ejemplo, si se intenta crear un `StockScanEvent` con un origen nulo, se produce una `IllegalArgumentException`. Esta información permite detectar un uso incorrecto antes de ejecutar el programa [2].
+
+| Etiqueta | Información que aporta |
+|---|---|
+| `@param` | Explica qué dato recibe el método o constructor y para qué sirve. |
+| `@return` | Describe el valor que devuelve un método. |
+| `@throws` | Indica qué excepción puede producirse y en qué situación. |
+| `@author` | Identifica al autor del código documentado. |
+| `@version` | Indica la versión del elemento documentado. |
+| `@since` | Señala desde qué versión está disponible. |
+| `@see` | Remite a una clase, un método u otro recurso relacionado. |
+
+En la documentación del componente utilicé principalmente `@param`, `@return` y `@throws`, según el comportamiento de cada método. En la actividad incluí además un ejemplo de comentario para mostrar cómo se combinan una descripción y sus etiquetas [2], [6].
+
+#### Revisión y resultado
+
+Revisé los comentarios existentes y actualicé los que necesitaban más información. Comprobé que las descripciones coincidieran con el comportamiento del código, que las etiquetas correspondieran a parámetros y resultados reales y que las explicaciones fueran claras. Los cambios se publicaron en la rama `main` de StockScan SGA. La documentación pública se generó con Java 21 sin avisos. La actividad contemplaba además una revisión cruzada con la persona responsable de calidad, cuya aprobación final no consta en la tarjeta [2], [7].
+
+### 3.4.2 Compilación del artefacto reutilizable
+
+#### Objetivo y entorno de trabajo
+
+El objetivo fue entregar el componente de escaneo como una biblioteca que pudiera utilizarse desde otro proyecto. El 11 de noviembre de 2026 inicié la investigación sobre el formato JAR y comprobé las herramientas de trabajo. Utilicé Apache NetBeans, el JDK 21 y Apache Ant 1.10.17. Confirmé la versión de Ant mediante `ant -version`. Java 21 es una versión de soporte a largo plazo, y Ant permite definir en `build.xml` los pasos de compilación y empaquetado para repetirlos de la misma manera [8]–[11].
+
+Un archivo JAR agrupa clases Java compiladas y otros recursos en un solo fichero. En este proceso, `javac` convierte los archivos `.java` en archivos `.class`, y la herramienta `jar` permite crear el paquete y consultar su contenido. En StockScan generé dos archivos con finalidades distintas: `StockScanE.jar` contiene la aplicación completa y `stockscan-componente-1.0.0.jar` contiene la biblioteca de escaneo [8], [12], [13].
+
+#### Primera compilación y resolución de una incidencia
+
+Primero ejecuté **Clean and Build** en NetBeans. Esta operación limpió los archivos de compilaciones anteriores, volvió a compilar el proyecto y generó `dist/StockScanE.jar`. La salida mostró `BUILD SUCCESSFUL`. Comprobé la ubicación del archivo desde la pestaña **Files** de NetBeans [8], [14].
+
+Durante las pruebas, el compilador mostró una advertencia relacionada con las opciones `-source 21` y `-target 21`. Probé a añadir `--release 21` como argumento adicional, pero NetBeans seguía pasando las otras dos opciones y la compilación falló. La causa era que `javac` no permite combinar `--release` con `-source` o `-target`. Retiré el argumento adicional para recuperar la compilación. En la configuración final de Ant, la tarea de compilación utiliza `release` con el valor 21, que establece tanto la versión del lenguaje como las API de Java disponibles [8], [13], [15]–[17].
+
+#### Cómo generé la biblioteca
+
+Añadí manualmente al archivo `build.xml` un objetivo de Apache Ant llamado `jar-componente`. Al ejecutarlo, Ant crea una carpeta temporal, compila las clases necesarias y las empaqueta en `stockscan-componente-1.0.0.jar`. El número `1.0.0` identifica la versión de la biblioteca. El resultado se guarda en `StockScanE/dist/`. El componente utiliza Swing, incluido en Java, por lo que esta biblioteca se pudo compilar sin añadir dependencias externas [8], [17]–[19].
+
+| Elemento incluido en el JAR actual | Función |
+|---|---|
+| `BasePanel` | Es la clase base de la que hereda el componente. |
+| `ComponenteStockScan` | Permite registrar oyentes y enviarles notificaciones. |
+| `StockScanEvent` | Contiene el código del artículo y el mensaje de cada aviso. |
+| `StockScanListener` | Define cómo recibe el aviso el programa que utiliza la biblioteca. |
+
+Para repetir la generación desde la raíz del repositorio, con el JDK 21 y Apache Ant disponibles, se ejecuta el siguiente comando [17]:
+
+```powershell
+ant -f StockScanE/build.xml jar-componente
+```
+
+#### Prueba realizada y resultado
+
+Primero consulté el contenido del JAR para comprobar qué clases se habían empaquetado [8], [12], [19]:
+
+```powershell
+jar tf StockScanE/dist/stockscan-componente-1.0.0.jar
+```
+
+Después compilé un programa de prueba en una carpeta independiente, utilizando el JAR como única dependencia de StockScan. Registré dos veces el mismo oyente y envié un aviso con el código `ART-02` y el mensaje `Stock actualizado`. La consola mostró una sola notificación. A continuación, retiré el oyente y envié otro aviso. La consola no mostró ninguna línea nueva. Así comprobé que la biblioteca se podía utilizar fuera del proyecto original, que registrar dos veces el mismo oyente no duplicaba los avisos y que retirarlo impedía que siguiera recibiéndolos [8].
+
+### 3.4.3 Generación de la documentación técnica
+
+#### Objetivo
+
+El objetivo de esta tarea fue transformar los comentarios del apartado 3.4.1 en una guía navegable. Así, quien recibe el JAR puede abrir la documentación, buscar una clase y consultar cómo se utiliza. Por ejemplo, puede averiguar cómo registrar un oyente y qué datos recibirá antes de escribir el código que procesa la notificación [5], [20].
+
+#### Cómo generé el HTML y el ZIP
+
+NetBeans ya disponía de una tarea para generar las páginas HTML con JavaDoc. Para automatizar también el empaquetado, añadí manualmente al archivo `build.xml` un objetivo de Ant llamado `javadoc-zip`. Lo configuré para realizar los siguientes pasos [17], [20], [21]:
+
+1. Crear una carpeta temporal y ejecutar la tarea de JavaDoc de NetBeans con el JDK 21.
+2. Leer los comentarios del código y generar el índice, las páginas de los paquetes y las páginas de las clases e interfaces. La configuración activa la revisión de la documentación y hace que un aviso detenga la generación.
+3. Comprimir el sitio completo en `stockscan-javadoc.zip`, guardarlo en `StockScanE/dist/` y eliminar la carpeta temporal.
+
+Para volver a generar la guía después de actualizar un comentario, se ejecuta este comando desde la raíz del repositorio [17]:
+
+```powershell
+ant -f StockScanE/build.xml javadoc-zip
+```
+
+#### Prueba realizada y resultado
+
+La generación terminó sin avisos. Para revisar la documentación tal como la recibiría otro desarrollador, descomprimí el ZIP completo y abrí `index.html` en Chrome. Desde el índice entré en el paquete del componente de escaneo y comprobé los enlaces entre sus páginas [20], [22].
+
+En `ComponenteStockScan` revisé que se explicara cómo crear el panel y registrar o retirar un oyente. En `StockScanEvent` comprobé que se describieran el código del artículo y el mensaje. Por último, en `StockScanListener` localicé el método que recibe la notificación. También verifiqué que los métodos mostraran sus parámetros, valores devueltos y excepciones cuando correspondía [20], [22].
+
+El resultado del apartado 3.4 son dos archivos que se pueden distribuir juntos: `stockscan-componente-1.0.0.jar` permite **utilizar el componente** y `stockscan-javadoc.zip` permite **consultar cómo se utiliza**. Para leer la guía basta con extraer el ZIP completo y abrir `index.html` en un navegador [19], [22].
+
+### Referencias
+
+[1] StockScan Team, “3.4 Documentación de la API técnica y empaquetado del artefacto,” *StockScan DII*, actividad n.º 59, GitHub, 2026. [En línea]. Disponible en [GitHub](https://github.com/stockscan-team/stockscan-dii/issues/59).
+
+[2] StockScan Team, “3.4.1 Documentación en código (Javadoc),” *StockScan DII*, actividad n.º 71 y comentarios de desarrollo, GitHub, 2026. [En línea]. Disponible en [GitHub](https://github.com/stockscan-team/stockscan-dii/issues/71).
+
+[3] OpenWebinars, “Documentación del código con Javadoc,” curso en línea. [En línea]. Disponible en [OpenWebinars](https://academia.openwebinars.net/portada/documentacion-codigo-javadoc/).
+
+[4] Á. L. Sánchez Pérez, “Certificado del curso Documentación del código con Javadoc,” evidencia de formación adjunta a la actividad 3.4.1, GitHub, 2026. [En línea]. Disponible en [PDF](https://github.com/user-attachments/files/34800580/certificado_documentacion_del_codigo_con_javadoc.pdf), [registro en la actividad](https://github.com/stockscan-team/stockscan-dii/issues/71#issuecomment-6851432676), [pág. 1](https://github.com/user-attachments/assets/1517f24e-9438-4de6-ba31-e2a2cbf225bb) y [pág. 2](https://github.com/user-attachments/assets/7e144cca-8872-4969-be74-675e33cdd042).
+
+[5] Oracle, “The javadoc Command,” *Java Platform, Standard Edition 21 Documentation*. [En línea]. Disponible en [Oracle](https://docs.oracle.com/en/java/javase/21/docs/specs/man/javadoc.html).
+
+[6] Á. L. Sánchez Pérez, “Ejemplo de comentario Javadoc,” figura adjunta a la actividad 3.4.1, GitHub, 2026. [En línea]. Disponible en [GitHub](https://github.com/user-attachments/assets/0b36b81d-c890-4910-9666-86a48674809f).
+
+[7] Á. L. Sánchez Pérez, “Actualizar la documentación JavaDoc,” *StockScan SGA*, commit `57fdf01`, GitHub, 2026. [En línea]. Disponible en [GitHub](https://github.com/stockscan-team/stockscan-sga/commit/57fdf016ed779e2904b1826221a1236199a8ddf3).
+
+[8] StockScan Team, “3.4.2 Compilación del artefacto reutilizable,” *StockScan DII*, actividad n.º 72, investigación previa y pruebas, GitHub, 2026. [En línea]. Disponible en [GitHub](https://github.com/stockscan-team/stockscan-dii/issues/72).
+
+[9] Oracle, “Oracle Java SE Support Roadmap.” [En línea]. Disponible en [Oracle](https://www.oracle.com/technetwork/java/javase/tech/eol-135779.html).
+
+[10] Apache Software Foundation, *Apache Ant User Manual*. [En línea]. Disponible en [Apache Ant](https://ant.apache.org/manual/).
+
+[11] Apache Software Foundation, “Apache Ant 1.10.17 Released,” *Apache Ant Project News*, 10 abr. 2026. [En línea]. Disponible en [Apache Ant](https://ant.apache.org/antnews.html).
+
+[12] Oracle, “The jar Command,” *Java Platform, Standard Edition 21 Documentation*. [En línea]. Disponible en [Oracle](https://docs.oracle.com/en/java/javase/21/docs/specs/man/jar.html).
+
+[13] Oracle, “The javac Command,” *Java Platform, Standard Edition 21 Documentation*. [En línea]. Disponible en [Oracle](https://docs.oracle.com/en/java/javase/21/docs/specs/man/javac.html).
+
+[14] Á. L. Sánchez Pérez, “Clean and Build y localización del JAR en la carpeta dist,” capturas de la actividad 3.4.2, GitHub, 2026. [En línea]. Disponibles en [Clean and Build](https://github.com/user-attachments/assets/05dc8475-4119-44b4-8761-433a13d49a24) y [carpeta dist](https://github.com/user-attachments/assets/735c917b-fab7-4f76-ac6c-c941afe4dcb8).
+
+[15] Á. L. Sánchez Pérez, “Resultados de las pruebas de compilación con Java 21,” capturas de la actividad 3.4.2, GitHub, 2026. [En línea]. Disponibles en [advertencia inicial](https://github.com/user-attachments/assets/ecde8916-1a2b-4cd6-8a44-78400a77daf7) y [error por opciones incompatibles](https://github.com/user-attachments/assets/d0c019b9-fa2a-453d-92de-7db82a6f0398).
+
+[16] Apache Software Foundation, “Javac,” *Apache Ant User Manual*. [En línea]. Disponible en [Apache Ant](https://ant.apache.org/manual/Tasks/javac.html).
+
+[17] StockScan Team, “Configuración de compilación y empaquetado del proyecto StockScanE,” archivo `build.xml`, *StockScan SGA*, GitHub, 2026. [En línea]. Disponible en [GitHub](https://github.com/stockscan-team/stockscan-sga/blob/41764e5/StockScanE/build.xml).
+
+[18] Apache Software Foundation, “Jar,” *Apache Ant User Manual*. [En línea]. Disponible en [Apache Ant](https://ant.apache.org/manual/Tasks/jar.html).
+
+[19] StockScan Team, “Biblioteca reutilizable del componente de escaneo de StockScan,” versión 1.0.0, archivo JAR, *StockScan SGA*, GitHub, 2026. [En línea]. Disponible en [GitHub](https://github.com/stockscan-team/stockscan-sga/blob/41764e5/StockScanE/dist/stockscan-componente-1.0.0.jar).
+
+[20] StockScan Team, “3.4.3 Generación de la documentación técnica,” *StockScan DII*, actividad n.º 73 y comprobaciones realizadas, GitHub, 2026. [En línea]. Disponible en [GitHub](https://github.com/stockscan-team/stockscan-dii/issues/73).
+
+[21] Apache Software Foundation, “Javadoc,” *Apache Ant User Manual*. [En línea]. Disponible en [Apache Ant](https://ant.apache.org/manual/Tasks/javadoc.html).
+
+[22] StockScan Team, “Documentación JavaDoc de StockScan SGA,” sitio HTML distribuido en el archivo `stockscan-javadoc.zip`, GitHub, 2026. [En línea]. Disponible en [GitHub](https://github.com/stockscan-team/stockscan-sga/blob/41764e5/StockScanE/dist/stockscan-javadoc.zip).
